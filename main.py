@@ -6,6 +6,8 @@ import utime
 from data1 import Database
 from modem import Sim7070
 from findyIoT import FindyIoT
+
+# да напиша метод, който да събира инфо за дивайса
 modem = Sim7070()
 
 d = Database()
