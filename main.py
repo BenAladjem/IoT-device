@@ -8,6 +8,8 @@ from modem import Sim7070
 from findyIoT import FindyIoT
 
 # да напиша метод, който да събира инфо за дивайса
+
+# да направя връзка между базата, модема и командите
 modem = Sim7070()
 
 d = Database()
