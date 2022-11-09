@@ -1,10 +1,14 @@
 from modem import *
 import utime
 
+modem = Sim7070()
+
 class Commands:
+    global modem
     def __init__(self, command):
         self.command = command
         self.m = Sim7070()
+        
         self.imei = self.m.getImei()
         self.batt = self.m.getBat()[1]
 
@@ -67,6 +71,7 @@ class Mode(Commands):
         self.mode_value = self.command[6:-1]
         #print(f"Mode {self.command[6:]}")
         print("Mode  "+self.mode_value)
+        modem.sendHiGPS("/input.php?IMEI=865456054799968&MSG=SLEEP-2;WORK-2;CYCLE-0;TRANS-3;OHR-1;INPUT-OPEN;&")
 
 class ModeQ(Commands):
     def __init__(self, command):
@@ -189,6 +194,17 @@ def command_action(command):
     a = Commands(command)
     r = a.recognition_name()
     return eval(r + ".return_result(a)")
+
+def reading_command():
+    
+    #modem.turnOn()
+    #modem.connectHiGPS()
+    
+    com = modem.sendHiGPS("/input.php?IMEI=865456054799968").decode("utf-8")
+    #com = modem.sendHiGPS("/input.php?IMEI=865456054799968&MSG=SLEEP-2;WORK-2;CYCLE-0;TRANS-3;OHR-1;INPUT-OPEN;&").decode("utf-8")
+
+    print("com= ", com)
+    return com
 
 #a = Commands("*MODE?$")
 #r = a.recognition_name()
