@@ -12,23 +12,7 @@ class User:
         self.imei = self.d.read('200')
         self.batt = self.d.read('223') # read from db, check from modem , when I need
         
-'''    
-    try:
-        f = open("mydb_user", "r + b")
-    except:
-        f = open("mydb_user", "w + b")
-        print("File")
-        
-    db = btree.open(f)
-
-    for key in db:
-        self.data[key] = db[key]
-
-    db.flush()
-    db.close()
-    f.close()
-        
-'''        
+            
 '''
 свързване със сървъра:
 
@@ -39,8 +23,18 @@ class User:
     5.команда = отговора от сървъра
         изпълняване на командата
     6.проверка за следваща команда
-        има -> 5.
+        няма -> сървъра връща "ОК"
+        има -> сървъра връща команда
+            установяване типа на командата
+            отговора трябва да бъде според типа команда mode-mode; eng-eng, gps-gps
+        5.
     7.затваряне на конекцията
+
+
+    MODE: "/input.php?IMEI=865456054799968&MSG=SLEEP-2;WORK-2;CYCLE-0;TRANS-3;OHR-1;INPUT-OPEN;&"
+    ENG:
+    GPS:
+    gprs text:   "/input.php?IMEI=865456054799968"
         
 '''
         
