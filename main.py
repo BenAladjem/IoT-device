@@ -6,12 +6,6 @@ import utime
 from data1 import Database
 from modem import Sim7070
 from findyIoT import FindyIoT
-
-# да напиша метод, който да събира инфо за дивайса
-
-# да направя връзка между базата, модема и командите
-
-# у-во -> какво има; какво прави
 modem = Sim7070()
 
 d = Database()
@@ -93,5 +87,16 @@ def try_to_get_gps():
 
 def get_report():
     pass
+
+def reading_command():
     
-#gps_dict = try_to_get_gps()  
+    #modem.turnOn()
+    #modem.connectHiGPS()
+    
+    com = modem.sendHiGPS("/input.php?IMEI=865456054799968").decode("utf-8")
+    #com = modem.sendHiGPS("/input.php?IMEI=865456054799968&MSG=SLEEP-2;WORK-2;CYCLE-0;TRANS-3;OHR-1;INPUT-OPEN;&").decode("utf-8")
+
+    print("com= ", com)
+ 
+   
+  
