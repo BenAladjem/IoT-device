@@ -35,6 +35,13 @@ class User:
     ENG:
     GPS:
     gprs text:   "/input.php?IMEI=865456054799968"
+    
+    Важно!
+    За timestamp :
+    
+    timestamp = modem.sendHiGPS('/t/')
+    locations[loc["Timestamp"]] = [loc["Lat"],loc["Lon”],loc[“Speed"]]
+    loc = {"1668175234": [42.67481, 23.28978, 0.0]}
         
 '''
         
