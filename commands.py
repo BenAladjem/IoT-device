@@ -143,7 +143,12 @@ class Gprs(Commands):
                 return gps_dict
             count += 1
         return False
-        
+    
+    # connection to the server
+    # get timestamp
+    # make dict{timestamp:[lat, lon, speed]}
+    # convert ubinascii.b2a_base64(locJSON)
+    # return GPSArray=
 
     def return_result(self):
         print("something")
