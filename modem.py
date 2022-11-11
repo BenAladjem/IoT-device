@@ -1,7 +1,9 @@
 import machine
 import config
 import utime
-import time
+#import time
+import ubinascii
+import json
 
 registrationStart = utime.time()
 registrationTime = 0
@@ -53,9 +55,9 @@ class Sim7070(object):
 
         if self.isOn() == False:
             self.pwr.value(1)
-            time.sleep(0.5)
+            utime.sleep(0.5)
             self.key.value(0)
-            time.sleep(2)
+            utime.sleep(2)
             self.key.value(1)
 
         return True
@@ -64,7 +66,7 @@ class Sim7070(object):
 
         try:
             self.us("AT+CPOWD=1")
-            time.sleep(2)
+            utime.sleep(2)
             self.pwr.value(0)
             return self.pwr.value()
         except:
@@ -78,7 +80,7 @@ class Sim7070(object):
             self.turnOn()
 
         while not self.isOn():
-            time.sleep(0.5)
+            utime.sleep(0.5)
         self.us("AT")
         command = "AT+CBC"
         wrong_command = "AT+CBC=?"
@@ -99,8 +101,8 @@ class Sim7070(object):
 
         self.uart.write(arg)
         self.uart.write(bytes([0x0d, 0x0a]))
-        time.sleep(0.1)
-        time.sleep(t)
+        utime.sleep(0.1)
+        utime.sleep(t)
         answer = self.uart.read();
 
         print(answer)
@@ -238,14 +240,35 @@ class Sim7070(object):
             inf = inf.split(responce)[1]
             inf = inf.split(",")
             # return inf
+            
+            
         else:
             return "No"
         for i in range(len(parameters)):
             parameters_info[parameters[i]] = inf[i]
 
             print(parameters[i], inf[i])
+                     
+        #location = {}
+        #location = [x for x in parameters_info if i in ["Latitude = ", "Longitude = ", "MSL Altitude = "]
+                                
+        #print(location)
 
         if parameters_info["Fix status = "]:
+            location = []
+            for key in ["Latitude = ", "Longitude = ", "MSL Altitude = "]:
+                location.append(parameters_info[key])
+            print(inf)
+            print(location)
+            l = {location[timestamp]:location}
+            
+            locJSON = json.dumps(location)
+            print(locJSON)
+            loc64 = ubinascii.b2a_base64(locJSON)
+            loc64 = loc64.decode("utf-8")
+            loc64 = loc64.replace("\n", "")
+            print(loc64)
+                
             return inf
         else:
             return "No GPS"
@@ -289,7 +312,7 @@ class Sim7070(object):
         regRetry = 60
         while self.isReg() == False and regRetry >0:
             regRetry -= 1
-            time.sleep(1)
+            utime.sleep(1)
         registrationTime = utime.time() - registrationStart
         print("registration time = ",registrationTime)
         cnact = self.us('AT+CNACT=0,1',3).decode("utf-8")
@@ -325,6 +348,8 @@ class Sim7070(object):
         
         # GPS :  https://www.higps.org/input.php?IMEI=865456054799968&User=F5100001&Pass=DOGPE2V3&Description=%22F5100001%22865456054799968BAT-0,35,3681GSM:%2206A4%22,%222C12%22&GPS=$GNRMC,114315.000,A,4240.4835,N,02317.3902,E,1.26,200.42,070222,,,A*70&ACUM=&
         
+        #eyIxNjY4MTc1MjM0IjogWzQyLjY3NDgxLCAyMy4yODk3OCwgMC4wXX0=
+        
         message = message.replace('"','')
         print("modem.sendUDP message:" )
         print(message)
@@ -334,7 +359,7 @@ class Sim7070(object):
 
         self.us('AT+CAOPEN=0,0,"TCP","in.higps.org",80',4)
                 #AT+CAOPEN   Open a TCP/UDP Connection
-        time.sleep(1)
+        utime.sleep(1)
         self.us('AT+CASEND=0,'+str(len(message)+6),1)
                 # AT+CASEND  Send Data via an Established Connection
         self.us('GET '+message+'\r\n')
@@ -350,7 +375,7 @@ class Sim7070(object):
             toret = self.getData(resp)
             print("Toret = " ,toret)
             if toret == False or toret == b'':
-                time.sleep(1)
+                utime.sleep(1)
                 resp = self.us('AT+CARECV=0,512',1)
                 print("Retry read")
                 toret = self.getData(resp)
@@ -389,7 +414,7 @@ class Sim7070(object):
         elif rep[1] == '200':
             print("Success")            
             print(rep)
-            #time.sleep(0.4)
+            #utime.sleep(0.4)
             datalen = rep[2]
             if int(datalen) > 10:
                 serverResp  = self.us('AT+SHREAD=0,'+datalen,2)
