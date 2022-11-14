@@ -217,6 +217,9 @@ class Sim7070(object):
         return gps
 
     def getGPS(self):
+        
+        self.us("AT+CGNSPWR=1")
+        
         self.us("AT")
         # b'AT+CGNSINF\r\r\n+CGNSINF: 1,1,20221021130421.000,42.674884,23.289787,592.877,,,1,,3.5,3.6,1.0,,3,,11864.6,143.4\r\n\r\nOK\r\n'
 
@@ -224,7 +227,9 @@ class Sim7070(object):
             print("OK,GPS is On")
         else:
             print("GPS is Off")
+            
             return
+        
         parameters_info = {}
         command = "AT+CGNSINF"
         responce = "+CGNSINF:"
@@ -260,6 +265,7 @@ class Sim7070(object):
                 location.append(parameters_info[key])
             print(inf)
             print(location)
+            '''
             l = {location[timestamp]:location}
             
             locJSON = json.dumps(location)
@@ -268,10 +274,27 @@ class Sim7070(object):
             loc64 = loc64.decode("utf-8")
             loc64 = loc64.replace("\n", "")
             print(loc64)
-                
+            '''   
             return inf
         else:
             return "No GPS"
+        
+    def return_base64(self, res):
+        # res = [' 1', '1', '20221114101637.000', '42.675474', '23.289744', '621.057', '', '', '1', '', '500.0', '500.0', '500.0', '', '3', '', '5683.3', '189.4\r\n\r\nOK\r\n']
+        t = res[2].split(".")[0]
+        t = (int(t[0:4]), int(t[4:6]), int(t[6:8]), int(t[8:10]), int(t[10:12]), int(t[12:14]), 0, 0)
+
+        timestamp = str(utime.mktime(t) + 946684800)
+
+        loc_data = {}
+        loc_data[timestamp] = [float(res[3]), float(res[4]), float(res[5])]
+    #print(loc_data)
+
+        locJSON = json.dumps(loc_data)
+        loc64 = ubinascii.b2a_base64(locJSON)
+        loc64 = loc64.decode("utf-8")
+        loc64 = loc64.replace("\n", "")
+        return loc64
         
         
     def getData(self,response):
