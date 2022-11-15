@@ -3,7 +3,7 @@ import config
 import utime
 
 
-from data1 import Database
+from data import Database
 from modem import Sim7070
 from findyIoT import FindyIoT
 modem = Sim7070()
@@ -65,8 +65,10 @@ def write_gps(gps):
 def write_report_type(r_type):
     d.write("565", r_type)
     d.store()
-    
+
+'''
 def try_to_get_gps():
+    # only for database
     count = 0
     gps_dict = {"254":"", "255":"", "256": "", "257":"", "258":""}
     if modem.isOnGPS() == "No":
@@ -79,14 +81,28 @@ def try_to_get_gps():
             gps_dict["254"] = res[3]
             gps_dict["255"] = res[4]
             gps_dict["256"] = res[5]
-            gps_dict["257"] = res[2]
+            gps_dict["257"] = res[2].split(".")[0]
             gps_dict["258"] = res[6]
+            
             return gps_dict
         count += 1
     return False
 
-def get_report():
-    pass
+def try_while_get_gps():
+    count = 0
+    while count < 5:
+        res = modem.getGPS()
+        if res == "No GPS":
+            utime.sleep(5)
+        else:
+            return res
+            
+        count += 1
+        
+        if count == 5:
+            return False
+
+'''
 
 def reading_command():
     
@@ -97,6 +113,41 @@ def reading_command():
     #com = modem.sendHiGPS("/input.php?IMEI=865456054799968&MSG=SLEEP-2;WORK-2;CYCLE-0;TRANS-3;OHR-1;INPUT-OPEN;&").decode("utf-8")
 
     print("com= ", com)
- 
+    
+def send_GPS_to_the_server():
+    x = ''
+    loc_info = ''
+    x = modem.gps()
+    print("x = ",x)
+    if x != False:
+        #modem.turnOffGPS()
+        loc_info = modem.return_base64(x)
+        message = "/input.php?IMEI="+imei+"&bat="+batt+"&GPSArray="+loc_info+"=&"
+    else:
+        # try to insert ENG
+        eng = modem.getCPSI()
+        message = "/input.php?IMEI="+imei+"&bat="+batt+"&GSM:"+eng+"=&"
+        pass
+    print(loc_info)
+    print(type(loc_info))
+    print("batt = ",batt)
+    #print(type(batt))
+    
+    # IMEI=865456054799968&bat=77&GPSArray=WyI0Mi42NzQ4NjMiLCAiMjMuMjg5ODM1IiwgIjYwNC44NDciXQ=&
+    #message = "/input.php?IMEI="+imei+"&bat="+batt+"&GPSArray="+loc_info+"=&"
+    print("message = "+message)
+    print("isOn =",modem.isOnGPS())
+    not_gps_message = "/input.php?IMEI="+imei+"&bat="+batt+"&GSM:"+'1,LTE CAT-M1,0,1550,339,-73,-50,-9,20,102,303617,284,05,255'
+    modem.turnOn()
+    test = modem.connectHiGPS()
+    print("connect = ",test)
+    #if modem.isConnected():
+    modem.sendHiGPS(message)
+    modem.cipClose()
+    
+    
+    
+#message = ("/input.php?IMEI="+str(imei))#+"&bat="+str(batt)+"GPSArray="+loc_info
+#print("message = "+ messaage)
    
   
