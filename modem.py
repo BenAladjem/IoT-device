@@ -141,9 +141,10 @@ class Sim7070(object):
         return eng
     
 
+
     def isConnected(self):
         
-        status = self.us('AT+CNACT?',1).decode('utf-8')
+        status = self.us('AT+CNACT?',2).decode('utf-8')
         status = status.replace("AT+CNACT?", "")
         status = status.replace("+CNACT","")
         status = self.remov(status)
@@ -206,9 +207,12 @@ class Sim7070(object):
         if command in st and responce in st:
             st = st.split(responce)[1]
             st = st.split(",")
-            return st
+        if st[0] == '1':
+            return True
+        elif st[0] == '0':
+            return False
         else:
-            return "No"
+            return "Error"
 
     def turnOnGPS(self):
         self.us("AT+CGNSPWR=1")
@@ -225,7 +229,7 @@ class Sim7070(object):
         self.us("AT+CGNSPWR=1")
         self.us("AT")        
         count_start = 0
-        count_end = 20
+        count_end = 2
         while count_start < count_end:
             command = "AT+CGNSINF"
             responce = "+CGNSINF:"
@@ -425,10 +429,9 @@ class Sim7070(object):
                 # AT+CAACK  Query Send data information
         resp = self.us('AT+CARECV=0,512',1)
                 #  AT+CARECV Receive Data via an Established Connection
-        print(resp)
-      
-        print("resp")
-        print(resp)
+
+        print("resp: ", resp)
+
         try: 
             toret = self.getData(resp)
             print("Toret = " ,toret)
