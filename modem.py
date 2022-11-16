@@ -139,22 +139,23 @@ class Sim7070(object):
         eng = eng.replace("+","")
         eng = eng.replace(" ",";")
         return eng
+    
+
+    def isConnected(self):
         
-    def isConnected(self):  #copy
-        # AT+SHSTATE? <status>    status (0):Expression HTTP(S) disconnect state    status (1):connect state
-        # да търся 1 в CNACT
-        if "SHSTATE: 1" in self.us('AT+SHSTATE?',1):
+        status = self.us('AT+CNACT?',1).decode('utf-8')
+        status = status.replace("AT+CNACT?", "")
+        status = status.replace("+CNACT","")
+        status = self.remov(status)
+        print(status)
+        status = status.split(':')[1:]
+        status = [x.split(',') for x in status]
+        if status[0][1] == "1":
             return True
-        elif "SHSTATE: 0" in self.us('AT+SHSTATE?',1):
-            print("AT+SHCONN= ")
-            self.us('AT+SHCONN')
-        elif "PDP DEACT" in self.us("AT+SHSTATE?",1) :
-            self.turnOff()
-            self.turnOn()
-            #if numb > 0:
-            self.connectUDP(1)
-        else:
+        elif status[0][1] == "0":
             return False
+        else:
+            raise Exception("Wrong CNACT result")
 
     def getEng(self):
         # '1,LTE CAT-M1,0,1550,339,-73,-50,-9,20,102,303617,284,05,255'
@@ -415,7 +416,7 @@ class Sim7070(object):
                 #AT+CAOPEN   Open a TCP/UDP Connection
         while self.us("AT",1) != b'AT\r\r\nOK\r\n': 
             print("Wait")
-        		#AT+CAOPEN   Open a TCP/UDP Connection
+        #AT+CAOPEN   Open a TCP/UDP Connection
         #utime.sleep(1)
         self.us('AT+CASEND=0,'+str(len(message)+6),1)
                 # AT+CASEND  Send Data via an Established Connection
