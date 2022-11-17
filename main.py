@@ -118,36 +118,82 @@ def send_GPS_to_the_server():
     x = ''
     loc_info = ''
     x = modem.gps()
+    batt = modem.getBat()#[1]
+    batt_descr = ",".join(batt) # returns str    
     print("x = ",x)
     if x != False:
         #modem.turnOffGPS()
         loc_info = modem.return_base64(x)
-        message = "/input.php?IMEI="+imei+"&bat="+batt+"&GPSArray="+loc_info+"=&"
+        #message = "/input.php?IMEI="+imei+"&bat="+batt+"&GPSArray="+loc_info+"=&"
+        message = "/input.php?IMEI="+imei+"&Description="+batt_descr+"&GPSArray="+loc_info+"=&"
     else:
         # try to insert ENG
-        eng = modem.getCPSI()
-        message = "/input.php?IMEI="+imei+"&bat="+batt+"&GSM:"+eng+"=&"
-        pass
+        cpsi = modem.getCPSI()
+        eng = modem.getEng()
+        description = "BeniTest"+imei+BAT
+        message = "/input.php?IMEI="+imei+"&bat="+batt+"&data="+eng+"=&"
     print(loc_info)
     print(type(loc_info))
+    print("IMEI = ", imei)
     print("batt = ",batt)
     #print(type(batt))
     
     # IMEI=865456054799968&bat=77&GPSArray=WyI0Mi42NzQ4NjMiLCAiMjMuMjg5ODM1IiwgIjYwNC44NDciXQ=&
     #message = "/input.php?IMEI="+imei+"&bat="+batt+"&GPSArray="+loc_info+"=&"
     print("message = "+message)
-    print("isOn =",modem.isOnGPS())
-    not_gps_message = "/input.php?IMEI="+imei+"&bat="+batt+"&GSM:"+'1,LTE CAT-M1,0,1550,339,-73,-50,-9,20,102,303617,284,05,255'
-    modem.turnOn()
-    test = modem.connectHiGPS()
-    print("connect = ",test)
-    #if modem.isConnected():
-    modem.sendHiGPS(message)
+    print("isOnGPS =",modem.isOnGPS())
+    modem.turnOffGPS()
     modem.cipClose()
-    
+    modem.connectHiGPS()
+    print("connect = ",modem.isConnected())
+    if modem.isConnected():
+        print("MODEM IS CONNECTED")
+        modem.sendHiGPS(message)
+        #modem.cipClose()
+    else:
+        print("MODEM NOT CONNECTED")
+    modem.cipClose()
     
     
 #message = ("/input.php?IMEI="+str(imei))#+"&bat="+str(batt)+"GPSArray="+loc_info
 #print("message = "+ messaage)
+    
+#modem.sendUDP message:
+#/input.php?IMEI=865456054799968&bat=25&data=LTE;CAT-M1,OnlineOK=&
+    
+#modem.sendUDP message:
+#/input.php?IMEI=865456054799968&bat=30&GPSArray=eyIxNjY4NjA0ODY4IjogWzQyLjY3NDc5LCAyMy4yODk4MywgNjQzLjMzNF19=&    
    
-  
+#  'LTE;CAT-M1,Online,284-05,0x0066,303617,339,EUTRAN-BAND3,1550,5,5,-10,-67,-44,15OK'
+
+def send_eng_to_the_server():
+    name = "BeniTest"
+    pas = "87654321"
+    cpsi = modem.getCPSI()
+    eng = modem.getEng()
+    imei = modem.getImei()
+    batt = modem.getBat()#[1]
+    batt = ",".join(batt) # returns str
+    cell_info = modem.parseCpsi()
+    print(type(cpsi),"   cpsi = ",cpsi)
+    print(type(eng), "   eng = ", eng)
+    print(type(imei),"   imei = ",imei)
+    print(type(batt), "   batt = ", batt)
+    
+    #description = name+imei+"BAT-"+batt+"GSM:"+cell_info["tac"]+","+cell_info["cell_id"]+cpsi махам cpsi и слагам mcc, mnc, tac cell
+    description = name+imei+"BAT-"+batt+"GSM:0000,FFFF"+cell_info["mcc"]+cell_info["mnc"]+cell_info["tac"]+cell_info["cell_id"]
+    message = "/input.php?IMEI="+imei+"&User="+name+"&Pass="+pas+"&Description="+description
+    # IMEI=865234031381352&User=Water_01&Pass=Ver01_00&Description="Water_01"865234031381352BAT-0,49,3648GSM:"0000","FFFF",3,GSM0,"0977,41,10,073e,284,01,0578"1,"0978,40,15,08e9,284,01,0578"2,"0982,25,34,088f,284,01,0578"&data=7,5298.0&
+    #test_mess = "/input.php?IMEI="+imei+"&User=BeniTest&Pass=87654321&Description=BeniTest"+imei+"BAT-"+"0,123,4567"
+    #test_mess = "/input.php?IMEI="+imei+"&User=BeniTest&Pass=87654321&Description=BeniTest"+imei+"BAT-"+batt+"GSM:"+cpsi
+    modem.turnOffGPS()
+    modem.cipClose()
+    modem.connectHiGPS()
+    if modem.isConnected():
+        print("MODEM IS CONNECTED")
+        modem.sendHiGPS(message)
+        #modem.cipClose()
+    else:
+        print("MODEM NOT CONNECTED")
+    modem.cipClose()
+    
