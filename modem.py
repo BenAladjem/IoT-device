@@ -160,6 +160,8 @@ class Sim7070(object):
 
     def getEng(self):
         # '1,LTE CAT-M1,0,1550,339,-73,-50,-9,20,102,303617,284,05,255'
+        #[+CENG: <cell>,"<earfcn>,<pci>,<rsrp>,<rssi>,<rsrq>,<sinr>,<tac>,<cellid> ,<mcc>,<mnc>,<tx power>"<CR><LF>+CENG: <cell>,"<earfcn>,<pci>,<rsrp>,<rssi>,<rsrq>,<sinr>"...]OK
+        #           0        1      2      3      4      5      6     7       8       9     10      11      12  13
         self.us("AT+CENG=1,1")
         # self.us("AT+CENG?", 1)
 
@@ -187,6 +189,20 @@ class Sim7070(object):
         par["operation_mode"] = operation_mode
         print(par)
         return par
+        
+    def parseEng(self):
+    	eng = self.getEng()
+    	eng = eng.split(',')
+    	par  ={"mcc":"","mnc":"", "tac":"", "cell_id":""}
+    	
+    	par["mcc"] = eng[9]
+        par["mnc"] = eng[10]
+        par["tac"] = eng[7]
+        par["cell_id"] = eng[8]
+        print(par)
+        
+        return par
+    	    	
 
     def getImei(self):
         if not self.isOn():
