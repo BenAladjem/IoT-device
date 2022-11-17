@@ -130,7 +130,7 @@ class Sim7070(object):
         
     def getCPSI(self):  # copy
         
-        eng =  self.us("AT+CPSI?",1).decode("utf-8")
+        eng =  self.us("AT+CPSI?",2).decode("utf-8")
         ee = eng.split("CPSI: ")
         self.us("AT+CENG=0")
         eng = ee[1]
@@ -168,6 +168,25 @@ class Sim7070(object):
         eng = eng.replace("AT+CENG?", "")
         eng = self.remov(eng)
         return eng
+    
+    def parseCpsi(self):
+        cpsi = self.getCPSI()
+        print(cpsi)
+        par  ={"mcc":"","mnc":"", "tac":"", "cell_id":""}
+        
+        system_mode, other = cpsi.split(";")
+        print("system_mode = ", system_mode)
+        other = other.split(",")
+        print(other)
+        operation_mode, tac, cell_id = other[0], other[3], other[4]
+        mcc,mnc = other[2].split("-")
+        par["mcc"] = mcc
+        par["mnc"] = mnc
+        par["tac"] = tac
+        par["cell_id"] = cell_id
+        par["operation_mode"] = operation_mode
+        print(par)
+        return par
 
     def getImei(self):
         if not self.isOn():
@@ -229,7 +248,7 @@ class Sim7070(object):
         self.us("AT+CGNSPWR=1")
         self.us("AT")        
         count_start = 0
-        count_end = 2
+        count_end = 20
         while count_start < count_end:
             command = "AT+CGNSINF"
             responce = "+CGNSINF:"
@@ -418,8 +437,12 @@ class Sim7070(object):
 
         self.us('AT+CAOPEN=0,0,"TCP","in.higps.org",80',4)
                 #AT+CAOPEN   Open a TCP/UDP Connection
+        
+        
         while self.us("AT",1) != b'AT\r\r\nOK\r\n': 
             print("Wait")
+            
+            
         #AT+CAOPEN   Open a TCP/UDP Connection
         #utime.sleep(1)
         self.us('AT+CASEND=0,'+str(len(message)+6),1)
