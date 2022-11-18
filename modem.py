@@ -159,51 +159,93 @@ class Sim7070(object):
             raise Exception("Wrong CNACT result")
 
     def getEng(self):
+        # b'AT+CENG?\r\r\n+CENG: 1,1,2,LTE CAT-M1\r\n\r\n+CENG: 0,"1550,339,-73,-47,-12,17,102,303617,284,05,255"\r\n+CENG: 1,"1550,414,-88,-51,-20,17"\r\n\r\nOK\r\n'
         # '1,LTE CAT-M1,0,1550,339,-73,-50,-9,20,102,303617,284,05,255'
-        #[+CENG: <cell>,"<earfcn>,<pci>,<rsrp>,<rssi>,<rsrq>,<sinr>,<tac>,<cellid> ,<mcc>,<mnc>,<tx power>"<CR><LF>+CENG: <cell>,"<earfcn>,<pci>,<rsrp>,<rssi>,<rsrq>,<sinr>"...]OK
+        #[+CENG: <cell>,"<earfcn>,<pci>,<rsrp>,<rssi>,<rsrq>,<sinr>,<tac>,<cellid> ,<mcc>,<mnc>,<tx power>"<CR><LF>
         #           0        1      2      3      4      5      6     7       8       9     10      11      12  13
+        # +CENG: <cell>,"<earfcn>,<pci>,<rsrp>,<rssi>,<rsrq>,<sinr>"...]OK
+        
+        # IMEI=860016041012985&User=QubiqoNB&Pass=Ver01_12&Description=QubiqoNB860016041012985BAT-0,90,4171
+        # GSM:0000,FFFF,1,LTECAT-M10,1550,339,-84,-62,-11,5,102,303617,284,05,255&er=&regTime=11&
+        
         self.us("AT+CENG=1,1")
         # self.us("AT+CENG?", 1)
 
-        eng = self.us("AT+CENG?", 2).decode("utf-8").replace("+CENG: 1,1,", "")
-        eng = eng.replace("+CENG: ", ",") #
-        eng = eng.replace("AT+CENG?", "")
-        eng = self.remov(eng)
+        eng = self.us("AT+CENG?", 2).decode("utf-8").replace("AT+CENG?","")
+        eng = eng.replace("+CENG: 1,1,", "")
+        eng = eng.replace("AT+CENG?","")
+        eng = self.remov(eng)        
+        eng = eng.split("+CENG:")
+        system = eng[0].split(",")
+        cells = eng[1:]
+        num_cells, system_mode = system[-2], system[-1]
+        if "CAT" in system_mode or "NB" in system_mode:
+            print(system[-1])
+            sell0 = cells[0].split(",")
+            lac = sell0[7]
+            cell_id = sell0[8]
+            mcc =sell0[9]
+            mnc = sell0[10]
+            rssi = sell0[4]
+            print(sell0)
+            
+        else:
+            # GSM:"0000","FFFF",2,GSM0,"0977,38,63,0a56,284,01,0578"1,"0979,27,34,0a53,284,01,0578"
+            print(system[-1])
+        
+        self.us("AT+CENG=0")
+        
+        print("".join(eng))
         return eng
     
     def parseCpsi(self):
+        # check for gsm or cat-m or nb-iot
         cpsi = self.getCPSI()
         print(cpsi)
-        par  ={"mcc":"","mnc":"", "tac":"", "cell_id":""}
+        par  ={"mcc":"","mnc":"", "tac":"", "cell_id":"", "rssi":""}
         
         system_mode, other = cpsi.split(";")
         print("system_mode = ", system_mode)
         other = other.split(",")
         print(other)
-        operation_mode, tac, cell_id = other[0], other[3], other[4]
-        mcc,mnc = other[2].split("-")
-        par["mcc"] = mcc
-        par["mnc"] = mnc
-        par["tac"] = tac
-        par["cell_id"] = cell_id
-        par["operation_mode"] = operation_mode
-        print(par)
-        return par
+        if system_mode == "LTE":
+            operation_mode, tac, cell_id = other[0], other[3], other[4]
+            mcc,mnc = other[2].split("-")
+            par["mcc"] = mcc
+            par["mnc"] = mnc
+            par["tac"] = tac
+            par["cell_id"] = cell_id
+            par["operation_mode"] = operation_mode
+            par["rssi"] = other[12]
+            cell_info = par["mcc"]+','+par["mnc"]+','+par["tac"]+','+par["cell_id"]+","+par["rssi"]
+        else:
+            operation_mode, tac, cell_id = other[0], other[3], other[4]
+            mcc,mnc = other[2].split("-")
+            par["mcc"] = mcc
+            par["mnc"] = mnc
+            par["tac"] = tac
+            par["cell_id"] = cell_id
+            par["operation_mode"] = operation_mode
+            par["rssi"] = other[12]
+            cell_info = par["mcc"]+','+par["mnc"]+','+par["tac"]+','+par["cell_id"]+","+par["rssi"]
+        return cell_info
         
     def parseEng(self):
-    	eng = self.getEng()
-    	eng = eng.split(',')
-    	par  ={"mcc":"","mnc":"", "tac":"", "cell_id":""}
-    	
-    	par["mcc"] = eng[9]
+        eng = self.getEng()
+        print(eng)
+        
+        eng = eng.split(',')
+        par  ={"mcc":"","mnc":"", "tac":"", "cell_id":"", "rssi":""}
+        print(eng)
+        par["mcc"] = eng[9]
         par["mnc"] = eng[10]
         par["tac"] = eng[7]
         par["cell_id"] = eng[8]
+        par["rssi"] = eng[4]
         print(par)
         
         return par
-    	    	
-
+        
     def getImei(self):
         if not self.isOn():
             return "Modem isn't turned ON"
@@ -572,7 +614,43 @@ class Sim7070(object):
         self.us("AT+CMNB=3")
         
 
+    def getEngLite(self):
 
+        self.us("AT+CENG=1,1")
+        eng =  self.us("AT+CENG?",1).decode("utf-8").replace("+CENG: 1,1","")
+        if "NO SERVICE" in eng:
+            return "No Cells"
+        eng = eng.replace("+CENG: ","")
+        eng = eng.replace("AT+CENG?","")
+        eng = eng.replace("OK","")
+        eng = eng.replace('"',"")
+        enn = eng.split("\r\n")
+        xx = 3 
+        cells = ""
+
+        while xx <  len(enn):
+
+            cell1 = enn[xx].split(",")
+            if len(cell1) == 12: #LTE Network first Cell
+                print("LTE first Cell")
+                cells += cell1[9]+","+cell1[10]+","+cell1[7]+','+cell1[8]+','+cell1[4]
+            elif len(cell1) == 7: #LTE Network second Cell
+                
+                 # Skip this one
+                 print("Skip second LTE")
+                #cells += ","+cell1[7]+","+cell1[4]+","+cell1[2]
+            elif len(cell1) == 8: #2G Network 
+                print("2G Cell")
+                if xx==3:
+                    cells += cell1[5]+","+cell1[6]
+            
+                cells += ","+cell1[7]+","+cell1[4]+","+cell1[2]
+
+            xx +=1
+
+        self.us("AT+CENG=0")
+        #eng = ee[1]
+        return cells 
 
 
 
