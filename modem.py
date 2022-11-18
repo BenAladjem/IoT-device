@@ -169,7 +169,6 @@ class Sim7070(object):
         # GSM:0000,FFFF,1,LTECAT-M10,1550,339,-84,-62,-11,5,102,303617,284,05,255&er=&regTime=11&
         
         self.us("AT+CENG=1,1")
-        # self.us("AT+CENG?", 1)
 
         eng = self.us("AT+CENG?", 2).decode("utf-8").replace("AT+CENG?","")
         eng = eng.replace("+CENG: 1,1,", "")
@@ -180,23 +179,18 @@ class Sim7070(object):
         cells = eng[1:]
         num_cells, system_mode = system[-2], system[-1]
         if "CAT" in system_mode or "NB" in system_mode:
-            print(system[-1])
-            sell0 = cells[0].split(",")
-            lac = sell0[7]
-            cell_id = sell0[8]
-            mcc =sell0[9]
-            mnc = sell0[10]
-            rssi = sell0[4]
-            print(sell0)
+            res = ","+"".join(eng)
+            res = res.replace(" ","")            
             
         else:
             # GSM:"0000","FFFF",2,GSM0,"0977,38,63,0a56,284,01,0578"1,"0979,27,34,0a53,284,01,0578"
+            # GSM:"0000","FFFF",3,GSM0,"0977,42,10,073e,284,01,0578"1,"0975,37,56,0716,284,01,0578"2,"0980,31,37,0755,284,01,044c
+            #     GSM:0000,FFFF,3,GSM0,"0977,42,10,073e,284,01,0578"1,"0975,37,56,0716,284,01,0578"2,"0980,31,37,0755,284,01,044c"
             print(system[-1])
         
         self.us("AT+CENG=0")
-        
-        print("".join(eng))
-        return eng
+
+        return res
     
     def parseCpsi(self):
         # check for gsm or cat-m or nb-iot
