@@ -166,7 +166,7 @@ def send_GPS_to_the_server():
    
 #  'LTE;CAT-M1,Online,284-05,0x0066,303617,339,EUTRAN-BAND3,1550,5,5,-10,-67,-44,15OK'
 
-def send_eng_to_the_server():
+def send_cpsi_to_the_server():
     name = "BeniTest"
     pas = "87654321"
     cpsi = modem.getCPSI()
@@ -180,12 +180,32 @@ def send_eng_to_the_server():
     print(type(imei),"   imei = ",imei)
     print(type(batt), "   batt = ", batt)
     
-    #description = name+imei+"BAT-"+batt+"GSM:"+cell_info["tac"]+","+cell_info["cell_id"]+cpsi махам cpsi и слагам mcc, mnc, tac cell
-    description = name+imei+"BAT-"+batt+"GSM:0000,FFFF"+cell_info["mcc"]+cell_info["mnc"]+cell_info["tac"]+cell_info["cell_id"]
+    #description = name+imei+"BAT-"+batt+"GSM:"+cell_info["tac"]+","+cell_info["cell_id"]+","+cell_info["mcc"]+','+cell_info["mnc"]+','+cell_info["tac"]+','+cell_info["cell_id"]+","+cell_info["rssi"]
+    description = name+imei+"BAT-"+batt+"GSM:0000,FFFF"+cell_info
     message = "/input.php?IMEI="+imei+"&User="+name+"&Pass="+pas+"&Description="+description
-    # IMEI=865234031381352&User=Water_01&Pass=Ver01_00&Description="Water_01"865234031381352BAT-0,49,3648GSM:"0000","FFFF",3,GSM0,"0977,41,10,073e,284,01,0578"1,"0978,40,15,08e9,284,01,0578"2,"0982,25,34,088f,284,01,0578"&data=7,5298.0&
-    #test_mess = "/input.php?IMEI="+imei+"&User=BeniTest&Pass=87654321&Description=BeniTest"+imei+"BAT-"+"0,123,4567"
-    #test_mess = "/input.php?IMEI="+imei+"&User=BeniTest&Pass=87654321&Description=BeniTest"+imei+"BAT-"+batt+"GSM:"+cpsi
+    
+    modem.turnOffGPS()
+    modem.cipClose()
+    modem.connectHiGPS()
+    if modem.isConnected():
+        print("MODEM IS CONNECTED")
+        modem.sendHiGPS(message)
+    else:
+        print("MODEM NOT CONNECTED")
+    modem.cipClose()
+    
+def send_eng_to_the_server():
+    name = "BeniTest"
+    pas = "87654321"
+    eng = modem.getEngLite()
+    imei = modem.getImei()
+    batt = modem.getBat()#[1]
+    batt = ",".join(batt) # returns str
+    #cell_info = modem.parseCpsi()
+    #description = name+imei+"BAT-"+batt+"GSM:0000,FFFF"+eng
+    description = name+imei+"BAT-"+batt+"GSM:0000,FFFF"+",1,LTECAT-M10,1550,339,-84,-62,-11,5,102,303617,284,05,255"
+    message = "/input.php?IMEI="+imei+"&User="+name+"&Pass="+pas+"&Description="+description       
+    
     modem.turnOffGPS()
     modem.cipClose()
     modem.connectHiGPS()
