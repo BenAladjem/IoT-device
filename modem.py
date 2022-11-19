@@ -178,16 +178,25 @@ class Sim7070(object):
         system = eng[0].split(",")
         cells = eng[1:]
         num_cells, system_mode = system[-2], system[-1]
+        '''
+        system_mode:
+        "NO SERVICE"
+		"GSM"
+		"LTE CAT-M1"
+		"LTE NB-IOT"
+        '''
         if "CAT" in system_mode or "NB" in system_mode:
+        # used only for data transfer, not possitioning. One cell is enough
             res = ","+"".join(eng)
             res = res.replace(" ","")            
-            
-        else:
+        elif "GSM" in system_mode:
+        	    
             # GSM:"0000","FFFF",2,GSM0,"0977,38,63,0a56,284,01,0578"1,"0979,27,34,0a53,284,01,0578"
             # GSM:"0000","FFFF",3,GSM0,"0977,42,10,073e,284,01,0578"1,"0975,37,56,0716,284,01,0578"2,"0980,31,37,0755,284,01,044c
             #     GSM:0000,FFFF,3,GSM0,"0977,42,10,073e,284,01,0578"1,"0975,37,56,0716,284,01,0578"2,"0980,31,37,0755,284,01,044c"
             print(system[-1])
-        
+        else:
+        	return "NO SERVICE"
         self.us("AT+CENG=0")
 
         return res
@@ -224,7 +233,7 @@ class Sim7070(object):
             cell_info = par["mcc"]+','+par["mnc"]+','+par["tac"]+','+par["cell_id"]+","+par["rssi"]
         return cell_info
         
-    def parseEng(self):
+    def parseEng(self): # do not use
         eng = self.getEng()
         print(eng)
         
@@ -580,6 +589,7 @@ class Sim7070(object):
         
         
     def cipClose(self): # затваря конекцията към сървъра
+    # use always after sending data to the server
         self.us("AT+CNACT=0,0")
         
     def sleep(self):
@@ -609,7 +619,7 @@ class Sim7070(object):
         
 
     def getEngLite(self):
-
+		# only CATM1 and NB
         self.us("AT+CENG=1,1")
         eng =  self.us("AT+CENG?",1).decode("utf-8").replace("+CENG: 1,1","")
         if "NO SERVICE" in eng:
