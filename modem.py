@@ -125,7 +125,6 @@ class Sim7070(object):
             print("No service")
             return False
         else:
-            # print(response)
             return True
         
     def getCPSI(self):  # copy
@@ -137,10 +136,10 @@ class Sim7070(object):
         eng = eng.replace("\r","")
         eng = eng.replace("\n","")
         eng = eng.replace("+","")
-        eng = eng.replace(" ",";")
+        eng = eng.replace(" ",",")# changed ";" -> ","
+                
         return eng
     
-
 
     def isConnected(self):
         
@@ -186,42 +185,30 @@ class Sim7070(object):
             # GSM:"0000","FFFF",2,GSM0,"0977,38,63,0a56,284,01,0578"1,"0979,27,34,0a53,284,01,0578"
             # GSM:"0000","FFFF",3,GSM0,"0977,42,10,073e,284,01,0578"1,"0975,37,56,0716,284,01,0578"2,"0980,31,37,0755,284,01,044c
             #     GSM:0000,FFFF,3,GSM0,"0977,42,10,073e,284,01,0578"1,"0975,37,56,0716,284,01,0578"2,"0980,31,37,0755,284,01,044c"
-            print(system[-1])
-        
+            res = ","+"".join(eng)
+            res = res.replace(" ","")
         self.us("AT+CENG=0")
 
         return res
     
     def parseCpsi(self):
         # check for gsm or cat-m or nb-iot
-        cpsi = self.getCPSI()
-        print(cpsi)
-        par  ={"mcc":"","mnc":"", "tac":"", "cell_id":"", "rssi":""}
-        
-        system_mode, other = cpsi.split(";")
-        print("system_mode = ", system_mode)
-        other = other.split(",")
-        print(other)
+        const = 1
+        while const < 4:            
+            cpsi = self.getCPSI()
+            cpsi = cpsi.split(",")
+            const = len(cpsi)            
+
+        system_mode = cpsi [0]
+
         if system_mode == "LTE":
-            operation_mode, tac, cell_id = other[0], other[3], other[4]
-            mcc,mnc = other[2].split("-")
-            par["mcc"] = mcc
-            par["mnc"] = mnc
-            par["tac"] = tac
-            par["cell_id"] = cell_id
-            par["operation_mode"] = operation_mode
-            par["rssi"] = other[12]
-            cell_info = par["mcc"]+','+par["mnc"]+','+par["tac"]+','+par["cell_id"]+","+par["rssi"]
+            operation_mode, tac, cell_id, rssi = cpsi[1], cpsi[4], cpsi[5], cpsi[13]
+            mcc,mnc = cpsi[3].split("-")
+            cell_info = mcc+','+mnc+','+tac+','+cell_id+','+rssi
         else:
-            operation_mode, tac, cell_id = other[0], other[3], other[4]
-            mcc,mnc = other[2].split("-")
-            par["mcc"] = mcc
-            par["mnc"] = mnc
-            par["tac"] = tac
-            par["cell_id"] = cell_id
-            par["operation_mode"] = operation_mode
-            par["rssi"] = other[12]
-            cell_info = par["mcc"]+','+par["mnc"]+','+par["tac"]+','+par["cell_id"]+","+par["rssi"]
+            operation_mode, tac, cell_id, rssi = cpsi[1], cpsi[4], cpsi[5], cpsi[13]
+            mcc,mnc = cpsi[3].split("-")
+
         return cell_info
         
     def parseEng(self):
