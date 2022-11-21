@@ -79,19 +79,19 @@ def send_GPS_to_the_server():
     gps = modem.gps()
     imei = modem.getImei()
     batt = modem.getBat()#[1]
-    batt = ",".join(batt) # returns str    
+    batt_descr = ",".join(batt) # returns str    
     print("gps = ",gps)
     if gps != False:
         loc_info = modem.return_base64(gps)
         #message = "/input.php?IMEI="+imei+"&bat="+batt+"&GPSArray="+loc_info+"=&"
-        message = "/input.php?IMEI="+imei+"&Description="+batt+"&GPSArray="+loc_info+"=&"
+        message = "/input.php?IMEI="+imei+"&bat="+batt[1]+"&GPSArray="+loc_info+"=&"
     else:
         # try to insert ENG
         name = "BeniTest"
         pas = "87654321"
         #cell_info = modem.parseCpsi()
-        eng = modem.getEng()
-        description = name+imei+"BAT-"+batt+"GSM:0000,FFFF"+eng
+        eng = modem.parseEng()
+        description = name+imei+"BAT-"+batt_descr+"GSM:0000,FFFF"+eng
         message = "/input.php?IMEI="+imei+"&User="+name+"&Pass="+pas+"&Description="+description
     
     # IMEI=865456054799968&bat=77&GPSArray=WyI0Mi42NzQ4NjMiLCAiMjMuMjg5ODM1IiwgIjYwNC44NDcigpsQ=&
@@ -154,7 +154,7 @@ def send_eng_to_the_server():
     name = "BeniTest"
     pas = "87654321"
     #eng = modem.getEngLite()
-    eng = modem.getEng()
+    eng = modem.parseEng()
     imei = modem.getImei()
     batt = modem.getBat()#[1]
     batt = ",".join(batt) # returns str
