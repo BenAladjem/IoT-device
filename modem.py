@@ -169,7 +169,7 @@ class Sim7070(object):
         
         self.us("AT+CENG=1,1")
 
-        eng = self.us("AT+CENG?", 2).decode("utf-8").replace("AT+CENG?","")
+        eng = self.us("AT+CENG?", 3).decode("utf-8").replace("AT+CENG?","")
         eng = eng.replace("+CENG: 1,1,", "")
         eng = eng.replace("AT+CENG?","")
         eng = self.remov(eng)        
@@ -211,16 +211,26 @@ class Sim7070(object):
 
         return cell_info
         
-    def parseEng(self):       
+    def parseEng(self):
+        '''
         eng = ''
         reg = False
         while not reg:
             eng = self.getEng()
             utime.sleep(0.5)
             reg = self.isReg()
+        '''
         
-        return eng
-        
+        count = 1
+        while count < 15:
+            eng = self.getEng()
+            l = len(eng.split(","))
+            if l > 6:
+                return eng
+            utime.sleep(0.5)
+            count += 1
+        return False
+    
     def getImei(self):
         if not self.isOn():
             return "Modem isn't turned ON"
@@ -281,7 +291,7 @@ class Sim7070(object):
         self.us("AT+CGNSPWR=1")
         self.us("AT")        
         count_start = 0
-        count_end = 20
+        count_end = 2
         while count_start < count_end:
             command = "AT+CGNSINF"
             responce = "+CGNSINF:"
