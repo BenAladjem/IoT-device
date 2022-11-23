@@ -213,11 +213,11 @@ class Gprs(Commands):
 
     def return_result(self):
         # send GPS to the server
-        gps = ''
-        loc_info = ''
-        gps = modem.gps()
         imei = modem.getImei()
-        batt = modem.getBat()#[1]   
+        batt = modem.getBat()#[1]
+        loc_info = ''
+        gps = ''
+        gps = modem.gps() 
         print("gps = ",gps)
         if gps != False:
             loc_info = modem.return_base64(gps)
