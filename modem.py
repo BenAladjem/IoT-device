@@ -425,6 +425,7 @@ class Sim7070(object):
         return inp
     
     def connectHiGPS(self): 
+    	# check if can't connect by LTE , try to change ->gsm network 2G
         global registrationTime
         global registrationStart
                 
