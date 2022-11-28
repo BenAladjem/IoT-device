@@ -158,6 +158,7 @@ class Sim7070(object):
             raise Exception("Wrong CNACT result")
 
     def getEng(self):
+    	# test result 2g to the server 
         # b'AT+CENG?\r\r\n+CENG: 1,1,2,LTE CAT-M1\r\n\r\n+CENG: 0,"1550,339,-73,-47,-12,17,102,303617,284,05,255"\r\n+CENG: 1,"1550,414,-88,-51,-20,17"\r\n\r\nOK\r\n'
         # '1,LTE CAT-M1,0,1550,339,-73,-50,-9,20,102,303617,284,05,255'
         #[+CENG: <cell>,"<earfcn>,<pci>,<rsrp>,<rssi>,<rsrq>,<sinr>,<tac>,<cellid> ,<mcc>,<mnc>,<tx power>"<CR><LF>
