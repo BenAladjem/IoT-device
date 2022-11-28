@@ -12,23 +12,23 @@ class Commands:
         self.imei = modem.getImei()
         self.batt = modem.getBat()[1]
 
-        self.d = {"#User=":"User",
-                  "#+":"Phones",
-                  "*MODE-":"Mode",
-                  "*MODE?$":"ModeQ",
-                  "*GPRS$": "Gprs",
-                  "*GSM$": "Eng"
-                  }
+        #self.d = {"#User=":"User",
+         #         "#+":"Phones",
+        #          "*MODE-":"Mode",
+         #         "*MODE?$":"ModeQ",
+         #         "*GPRS$": "Gprs",
+         #         "*GSM$": "Eng"
+         #         }
 
 
-    def recognition_name(self):
-        class_name = ''
-        for key in self.d:
-            if key in self.command:
-                class_name = self.d[key]
+    #def recognition_name(self):
+        #class_name = ''
+        #for key in self.d:
+            #if key in self.command:
+                #class_name = self.d[key]
             # else:
             #     return "False"
-        return class_name
+        #return class_name
 
 
     def recognition_other(self):
@@ -147,7 +147,7 @@ class Loc(Commands):
 
 
     def return_result(self):
-        #modem.sendHiGPS('/input.php?IMEI=865456054799968&User=BeniTest&Pass=M2IP1385&Description="BeniTest"865456054799968BAT-0,88,410LOCGSM:"0578","0740"3,"0046,30,11,08ea,284,01,0578"&')
+        #
 
         name = "BeniTest"
         pas = "87654321"
@@ -213,11 +213,11 @@ class Gprs(Commands):
 
     def return_result(self):
         # send GPS to the server
-        imei = modem.getImei()
-        batt = modem.getBat()#[1]
-        loc_info = ''
         gps = ''
-        gps = modem.gps() 
+        loc_info = ''
+        gps = modem.gps()
+        imei = modem.getImei()
+        batt = modem.getBat()#[1]   
         print("gps = ",gps)
         if gps != False:
             loc_info = modem.return_base64(gps)
@@ -232,7 +232,7 @@ class Gprs(Commands):
             batt = ",".join(batt)
             #eng = modem.getEng()
             eng = modem.parseEng()
-            description = name+imei+"BAT-"+batt+"GSM:0000,FFFF"+eng
+            description = name+imei+"BAT-"+batt+"GPS-OFF"+"GSM:0000,FFFF"+eng
             message = "/input.php?IMEI="+imei+"&User="+name+"&Pass="+pas+"&Description="+description
 
         modem.turnOffGPS()
@@ -399,10 +399,15 @@ def recogn_name(command):
 
 
 def reading_command():
+    modem.cipClose()
     modem.connectHiGPS()    
-    com = modem.sendHiGPS("/input.php?IMEI=865456054799968").decode("utf-8")
-    print("com= ", com)
-    return com
+    com = modem.sendHiGPS("/input.php?IMEI=865456054799968")
+    if len(com) > 1 :
+        com = com.decode("utf-8")
+        print("com= ", com)
+        return com
+    else:
+        return False
 
 def command_action(command):
     r = recogn_name(command)
