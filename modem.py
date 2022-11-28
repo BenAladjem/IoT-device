@@ -227,7 +227,7 @@ class Sim7070(object):
             l = len(eng.split(","))
             if l > 6:
                 return eng
-            utime.sleep(0.5)
+            utime.sleep(5)  #0.5
             count += 1
         return False
     
@@ -291,7 +291,7 @@ class Sim7070(object):
         self.us("AT+CGNSPWR=1")
         self.us("AT")        
         count_start = 0
-        count_end = 2
+        count_end = 25
         while count_start < count_end:
             command = "AT+CGNSINF"
             responce = "+CGNSINF:"
@@ -307,6 +307,10 @@ class Sim7070(object):
             
             if inf[1]:
                 self.turnOffGPS()
+                #self.turnOff()
+                #self.turnOn()
+                #self.us("AT+CGNSPWR=0") # without this GSM dont work
+                #self.isReg()
                 return inf
             
             
@@ -315,6 +319,10 @@ class Sim7070(object):
             print(count_start)
             if count_start >= count_end:
                 self.turnOffGPS()
+                #self.turnOff()
+               # self.turnOn()
+                #self.us("AT+CGNSPWR=0")# 
+                #self.isReg()
                 return False
         
 
@@ -399,20 +407,29 @@ class Sim7070(object):
         #resp = ['AT+CARECV=0,100\r', '+CARECV: 7,*SET,55', '', 'OK', '']
         #resp = ['AT+CARECV=0,100\r', '+CARECV: 0', '', 'OK', '', '+CADATAIND: 0', '', '+CASTATE: 0,0', '']
         #resp = ['AT+CARECV=0,100\r', '+CARECV: 5,15858', '', 'OK', '']
-        
+        # resp:  b'AT+CARECV=0,512\r\r\nERROR\r\n'   - с това дава грешка
         resp = response.split(b'\r\n')
+        print("resp_getData = ", resp)
         n = 0
-        for repons in resp : 
+        for repons in resp :
+            print("respons = ", repons)
             if repons == b'AT+CARECV=0,512\r':
+                print("break")
                 break 
             else:
+                print("n+=1")
                 n +=1
-
-
         
         if len(resp)>0:
-        
-            datalen =  int(resp[n+1][9:].split(b',')[0])
+            print("len", len(resp))
+            print(" -> ",resp)
+            d_len = resp[n+1][9:].split(b',')[0]
+            print(d_len)
+            if d_len == b'':
+                datalen = 0
+                return "Connection Error"
+            else:
+                datalen =  int(d_len)
             print("Data len = ",datalen)
         else:
             return False
@@ -425,19 +442,19 @@ class Sim7070(object):
         return inp
     
     def connectHiGPS(self): 
-    	# check if can't connect by LTE , try to change ->gsm network 2G
         global registrationTime
         global registrationStart
                 
         connected = False
-        retry = 5
+        retry = 10
         regRetry = 60
         while self.isReg() == False and regRetry >0:
             regRetry -= 1
             utime.sleep(1)
         registrationTime = utime.time() - registrationStart
+        print()
         print("registration time = ",registrationTime)
-        cnact = self.us('AT+CNACT=0,1',3).decode("utf-8")
+        cnact = self.us('AT+CNACT=0,1',8).decode("utf-8")  # 2 -> 5
                 #AT+CNACT  APP Network Active
                 #  <action> 0 Deactive; 1 Active  2 Auto Active
                 
@@ -494,7 +511,7 @@ class Sim7070(object):
         self.us('GET '+message+'\r\n')
         self.us('AT+CAACK=0',1)
                 # AT+CAACK  Query Send data information
-        resp = self.us('AT+CARECV=0,512',1)
+        resp = self.us('AT+CARECV=0,512',4)
                 #  AT+CARECV Receive Data via an Established Connection
 
         print("resp: ", resp)
