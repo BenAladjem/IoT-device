@@ -9,8 +9,8 @@ class Commands:
         self.command = command
         self.m = Sim7070()
         
-        self.imei = modem.getImei()
-        self.batt = modem.getBat()[1]
+        #self.imei = modem.getImei()
+        #self.batt = modem.getBat()[1]
 
         #self.d = {"#User=":"User",
          #         "#+":"Phones",
@@ -179,36 +179,7 @@ class Gprs(Commands):
         #self.other = other        
      
     def send_GPS_to_the_server(): # return_result methot make the same
-        gps = ''
-        loc_info = ''
-        gps = modem.gps()
-        imei = modem.getImei()
-        batt = modem.getBat()#[1]
-        batt = ",".join(batt) # returns str    
-        print("gps = ",gps)
-        if gps != False:
-            loc_info = modem.return_base64(gps)
-        #message = "/input.php?IMEI="+imei+"&bat="+batt+"&GPSArray="+loc_info+"=&"
-            message = "/input.php?IMEI="+imei+"&Description="+batt+"&GPSArray="+loc_info+"=&"
-        else:
-            # try to insert ENG
-            name = "BeniTest"
-            pas = "87654321"
-            #eng = modem.getEng()
-            eng = modem.parceCpsi()
-            description = name+imei+"BAT-"+batt+"GPS-OFF"+"GSM:0000,FFFF"+eng  #  !!!   add "GPS-OFF"
-            message = "/input.php?IMEI="+imei+"&User="+name+"&Pass="+pas+"&Description="+description
-
-        modem.turnOffGPS()
-        modem.cipClose()
-        modem.connectHiGPS()
-        print("connect = ",modem.isConnected())
-        if modem.isConnected():
-            print("MODEM IS CONNECTED")
-            modem.sendHiGPS(message)
-        else:
-            print("MODEM NOT CONNECTED")
-        modem.cipClose()
+        pass
 
 
     def return_result(self):
@@ -223,6 +194,10 @@ class Gprs(Commands):
             loc_info = modem.return_base64(gps)
         #message = "/input.php?IMEI="+imei+"&bat="+batt+"&GPSArray="+loc_info+"=&"
             message = "/input.php?IMEI="+imei+"&bat="+batt[1]+"&GPSArray="+loc_info+"=&"
+            modem.turnOffGPS()
+            modem.cipClose()
+            
+            
         else:
             # try to insert ENG
             modem.turnOffGPS()
@@ -232,11 +207,10 @@ class Gprs(Commands):
             batt = ",".join(batt)
             #eng = modem.getEng()
             eng = modem.parseEng()
-            description = name+imei+"BAT-"+batt+"GPS-OFF"+"GSM:0000,FFFF"+eng
-            message = "/input.php?IMEI="+imei+"&User="+name+"&Pass="+pas+"&Description="+description
+            description = name+imei+"BAT-"+batt+","+"GSM:0000,FFFF"+eng
+            message = "/input.php?IMEI="+imei+"&User="+name+"&Pass="+pas+"&Description="+description+"&GPS-OFF"
+            modem.cipClose()
 
-        modem.turnOffGPS()
-        modem.cipClose()
         modem.connectHiGPS()
         print("connect = ",modem.isConnected())
         if modem.isConnected():
@@ -440,6 +414,4 @@ def command_cicle():
 
 #b = Commands("*MODE-2468135$")
 #rr = b.recognition_name()
-#eval(rr+".return_result(b)")
-
-
+#eval(rr+".return_result(b)"
