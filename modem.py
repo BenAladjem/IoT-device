@@ -176,7 +176,10 @@ class Sim7070(object):
         eng = self.remov(eng)        
         eng = eng.split("+CENG:")
         system = eng[0].split(",")
-        cells = eng[1:]
+        try:
+            cells = eng[1:]
+        except:
+            Exception("Index out of range")
         num_cells, system_mode = system[-2], system[-1]
         if "CAT" in system_mode or "NB" in system_mode:
             res = ","+"".join(eng)
@@ -292,7 +295,7 @@ class Sim7070(object):
         self.us("AT+CGNSPWR=1")
         self.us("AT")        
         count_start = 0
-        count_end = 25
+        count_end = 2
         while count_start < count_end:
             command = "AT+CGNSINF"
             responce = "+CGNSINF:"
@@ -320,10 +323,6 @@ class Sim7070(object):
             print(count_start)
             if count_start >= count_end:
                 self.turnOffGPS()
-                #self.turnOff()
-               # self.turnOn()
-                #self.us("AT+CGNSPWR=0")# 
-                #self.isReg()
                 return False
         
 
