@@ -142,7 +142,7 @@ class Sim7070(object):
     
 
     def isConnected(self):
-        
+        self.us("AT")
         status = self.us('AT+CNACT?',2).decode('utf-8')
         status = status.replace("AT+CNACT?", "")
         status = status.replace("+CNACT","")
@@ -158,7 +158,6 @@ class Sim7070(object):
             raise Exception("Wrong CNACT result")
 
     def getEng(self):
-    	# test result 2g to the server 
         # b'AT+CENG?\r\r\n+CENG: 1,1,2,LTE CAT-M1\r\n\r\n+CENG: 0,"1550,339,-73,-47,-12,17,102,303617,284,05,255"\r\n+CENG: 1,"1550,414,-88,-51,-20,17"\r\n\r\nOK\r\n'
         # '1,LTE CAT-M1,0,1550,339,-73,-50,-9,20,102,303617,284,05,255'
         #[+CENG: <cell>,"<earfcn>,<pci>,<rsrp>,<rssi>,<rsrq>,<sinr>,<tac>,<cellid> ,<mcc>,<mnc>,<tx power>"<CR><LF>
@@ -176,10 +175,8 @@ class Sim7070(object):
         eng = self.remov(eng)        
         eng = eng.split("+CENG:")
         system = eng[0].split(",")
-        try:
-            cells = eng[1:]
-        except:
-            Exception("Index out of range")
+        print("SYSTEM = ", system)
+        cells = eng[1:]
         num_cells, system_mode = system[-2], system[-1]
         if "CAT" in system_mode or "NB" in system_mode:
             res = ","+"".join(eng)
@@ -292,6 +289,7 @@ class Sim7070(object):
         return gps
     
     def gps(self):
+        self.turnOnGPS()
         self.us("AT+CGNSPWR=1")
         self.us("AT")        
         count_start = 0
@@ -323,6 +321,10 @@ class Sim7070(object):
             print(count_start)
             if count_start >= count_end:
                 self.turnOffGPS()
+                #self.turnOff()
+               # self.turnOn()
+                #self.us("AT+CGNSPWR=0")# 
+                #self.isReg()
                 return False
         
 
@@ -404,6 +406,7 @@ class Sim7070(object):
         
         
     def getData(self,response):
+        self.us("AT")
         #resp = ['AT+CARECV=0,100\r', '+CARECV: 7,*SET,55', '', 'OK', '']
         #resp = ['AT+CARECV=0,100\r', '+CARECV: 0', '', 'OK', '', '+CADATAIND: 0', '', '+CASTATE: 0,0', '']
         #resp = ['AT+CARECV=0,100\r', '+CARECV: 5,15858', '', 'OK', '']
