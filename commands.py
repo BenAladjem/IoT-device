@@ -188,7 +188,8 @@ class Gprs(Commands):
         loc_info = ''
         gps = modem.gps()
         imei = modem.getImei()
-        batt = modem.getBat()#[1]   
+        batt = modem.getBat()#[1] 
+        print()  
         print("gps = ",gps)
         if gps != False:
             loc_info = modem.return_base64(gps)
@@ -353,6 +354,7 @@ class Get(Commands):
 
 
 def recogn_name(command):
+	print("METHOD recogn_name()")
     d = {"#User=":"User",
              "#+":"Phones",
          "*MODE-":"Mode",
@@ -373,6 +375,7 @@ def recogn_name(command):
 
 
 def reading_command():
+	print("METHOD reading_command()")
     modem.cipClose()
     modem.connectHiGPS()    
     com = modem.sendHiGPS("/input.php?IMEI=865456054799968")
@@ -384,6 +387,7 @@ def reading_command():
         return False
 
 def command_action(command):
+	print("METHOD command_action()")
     r = recogn_name(command)
     print("Class name == ",r)
     st = ".return_result('"+command+"')"  # add command as argument
@@ -394,11 +398,15 @@ def command_action(command):
 
 
 def command_cicle():
+	print("METHOD command_cicle()")
     c = ""
     while not c == "OK":
         c = reading_command()
         if c == "OK":
             return "No more commands "
+        elif c == "":
+        	return "No command"
+        			# да се провери какво дава сървъра без чакаща команда
         command_action(c)
         
         
