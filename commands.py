@@ -11,28 +11,7 @@ class Commands:
     global modem
     def __init__(self, command):
         self.command = command
-        self.m = Sim7070()
-        
-        #self.imei = modem.getImei()
-        #self.batt = modem.getBat()[1]
-
-        #self.d = {"#User=":"User",
-         #         "#+":"Phones",
-        #          "*MODE-":"Mode",
-         #         "*MODE?$":"ModeQ",
-         #         "*GPRS$": "Gprs",
-         #         "*GSM$": "Eng"
-         #         }
-
-
-    #def recognition_name(self):
-        #class_name = ''
-        #for key in self.d:
-            #if key in self.command:
-                #class_name = self.d[key]
-            # else:
-            #     return "False"
-        #return class_name
+        #self.m = Sim7070()
 
 
     def recognition_other(self):
@@ -97,9 +76,24 @@ class Mode(Commands):
     # Output Type: gprs Text:  0.0527 *MODE-0107000$
     # Input Type: mode Text: IMEI=865456054799968&MSG=SLEEP-0;WORK-1;CYCLE-0;TRANS-7;OHR-0;INPUT-OPEN;&
     
+    
+    default_report_type  = {
+        "No report":"",
+        "GPS possition by SMS":"",
+        "Battery by GPRS":"",
+        "GPS and Battery by GPRS":"",
+        "Bluetooth by GPRS":"",
+        "GPS possition by SMS and GPRS":"",
+        "GSM information by GPRS":"",
+        "Battery by WiFi":""
+        }
+    
+    
+    
     def __init__(self, command:str):
         super().__init__(command)
         self.command = command
+        
 
 
 
@@ -110,6 +104,7 @@ class Mode(Commands):
         c = my_command.replace("*MODE-","")
         c = c.replace("$","")
         c = [x for x in c]  # !!! MODE IS HERE  !!!
+        trans = c[3]
         
         if c[5]== "0":
             inp = "OPEN"
@@ -381,7 +376,7 @@ def recogn_name(command):
 
 
 
-def reading_command():
+def reading_command(): #изпраща команда обръщение към сървъра, за да прочете чакаща команда, ако има
     print("METHOD reading_command()")
     modem.cipClose()
     modem.connectHiGPS()    
@@ -394,7 +389,7 @@ def reading_command():
     else:
         return False
 
-def command_action(command):
+def command_action(command): # is calling method return_result
     print("METHOD command_action()")
     r = recogn_name(command)
     print("Class name == ",r)
@@ -403,9 +398,15 @@ def command_action(command):
 
     return eval(r + st)
 
+def class_instan(command): # връща инстанция към класа, за който се отнася командата
+    print("METHOD class_instan()")
+    class_name = recogn_name(command)
+    return eval(class_name+"('"+command+"')")
+
 
 
 def command_cicle():
+    global class_inst
     print("METHOD command_cicle()")
     c = ""
     while not c == "OK":
@@ -415,7 +416,8 @@ def command_cicle():
         elif c == "":
             return "No command"
                 # да се провери какво дава сървъра без чакаща команда
-        command_action(c)
+        #command_action(c)
+        class_inst = class_instan(c)
         
         
         
