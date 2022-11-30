@@ -38,7 +38,7 @@ class Sim7070(object):
         return text
 
     def isOn(self):
-    	print("METHOD isOn()")
+        print("METHOD isOn()")
         #self.uart = machine.UART(1, self.br, rx=self.rx, tx=self.tx, txbuf=1024, rxbuf=2048)
         self.us("AT")
         at = self.us("AT")
@@ -50,7 +50,7 @@ class Sim7070(object):
             return False
 
     def turnOn(self):
-		print("METHOD turnOn()")
+        print("METHOD turnOn")
         self.pwr.value(0)
         self.key.value(1)
 
@@ -64,7 +64,7 @@ class Sim7070(object):
         return True
 
     def turnOff(self):
-		print("METHOD turnOff())
+        print("METHOD turnOff()")
         try:
             self.us("AT+CPOWD=1")
             utime.sleep(2)
@@ -74,15 +74,16 @@ class Sim7070(object):
             return False
 
     def getBat(self):
-    	print("METHOD getBat()")
+        print("METHOD getBat()")
         # My method for tests
         # b = b'AT+CBC\r\r\n+CBC: 0,73,3955\r\n\r\nOK\r\n'
         # c = b'AT+CBC=?\r\r\n+CBC: (0-2),(1-100),(voltage)\r\n\r\nOK\r\n'
-        if not self.isOn():
-            self.turnOn()
+        
+        #if not self.isOn():
+            #self.turnOn()
 
-        while not self.isOn():
-            utime.sleep(0.5)
+        #while not self.isOn():
+            #utime.sleep(0.5)
         self.us("AT")
         command = "AT+CBC"
         wrong_command = "AT+CBC=?"
@@ -98,7 +99,7 @@ class Sim7070(object):
             return "No"
 
     def us(self, arg, t=0):
-		print("METHOD us")
+        print(">>METHOD us")
         answer = []
 
         self.uart.write(arg)
@@ -107,14 +108,14 @@ class Sim7070(object):
         utime.sleep(t)
         answer = self.uart.read();
 
-        print(answer)
-        if hasattr(answer, "decode"):
+        print("us answer = ",answer)
+        if hasattr(answer, "decode"): # Check if the "answer" object has the "decode" property(True/False)
             return answer
         else:
             return "False"
 
     def isReg(self):
-		print("METHOD isReg()")
+        print("METHOD isReg()")
         if not self.isOn():
             return "Modem isn't turned ON"
 
@@ -144,13 +145,13 @@ class Sim7070(object):
     
 
     def isConnected(self):
-    	print("METHOD isConnected()")
+        print("METHOD isConnected()")
         self.us("AT")
         status = self.us('AT+CNACT?',2).decode('utf-8')
         status = status.replace("AT+CNACT?", "")
         status = status.replace("+CNACT","")
         status = self.remov(status)
-        print(status)
+        print("status = ",status)
         status = status.split(':')[1:]
         status = [x.split(',') for x in status]
         if status[0][1] == "1":
@@ -161,8 +162,9 @@ class Sim7070(object):
             raise Exception("Wrong CNACT result")
 
     def getEng(self):
-    	print()
-		print("METHOD getEng()")
+        
+        print()
+        print("METHOD getEng()")
         # b'AT+CENG?\r\r\n+CENG: 1,1,2,LTE CAT-M1\r\n\r\n+CENG: 0,"1550,339,-73,-47,-12,17,102,303617,284,05,255"\r\n+CENG: 1,"1550,414,-88,-51,-20,17"\r\n\r\nOK\r\n'
         # '1,LTE CAT-M1,0,1550,339,-73,-50,-9,20,102,303617,284,05,255'
         #[+CENG: <cell>,"<earfcn>,<pci>,<rsrp>,<rssi>,<rsrq>,<sinr>,<tac>,<cellid> ,<mcc>,<mnc>,<tx power>"<CR><LF>
@@ -218,7 +220,7 @@ class Sim7070(object):
         return cell_info
         
     def parseEng(self):
-    	print("METHOD parseEng()")
+        print("METHOD parseEng()")
         '''
         eng = ''
         reg = False
@@ -234,14 +236,14 @@ class Sim7070(object):
             l = len(eng.split(","))
             if l > 6:
                 return eng
-            utime.sleep(5)  #0.5
+            utime.sleep(1)  #0.5
             count += 1
         return False
     
     def getImei(self):
-    	print("METHOD getImei()")
-        if not self.isOn():
-            return "Modem isn't turned ON"
+        print("METHOD getImei()")
+        #if not self.isOn():
+            #return "Modem isn't turned ON"
         self.us("AT")
         command = "AT+GSN"
 
@@ -254,7 +256,7 @@ class Sim7070(object):
             return "No"
 
     def getCCID(self):
-    	print("METHOD getCCID()")
+        print("METHOD getCCID()")
         if not self.isOn():
             return "Modem isn't turned ON"
         self.us("AT")
@@ -269,7 +271,7 @@ class Sim7070(object):
             return "No"
 
     def isOnGPS(self):
-    	print("METHOD isOnGPS()")
+        print("METHOD isOnGPS()")
         self.us("AT")
         command = "AT+CGNSPWR?"
         wrong_command = "ERROR"  # да напиша проверка
@@ -287,26 +289,27 @@ class Sim7070(object):
             return "Error"
 
     def turnOnGPS(self):
-    	print("METHOD turnOnGPS()")
+        print("METHOD turnOnGPS()")
         self.us("AT+CGNSPWR=1")
         gps = self.us("AT+CGNSPWR?").decode("UTF-8")
         return gps
 
     def turnOffGPS(self):
-    	print("METHOD turnOffGPS()")
+        print("METHOD turnOffGPS()")
         self.us("AT+CGNSPWR=0")
         gps = self.us("AT+CGNSPWR?").decode("UTF-8")
         print("GPS IS TURNED OFF")
+        print()
         return gps
     
     def gps(self):
-    	print()
-    	print("METHOD gps()")
+        print()
+        print("METHOD gps()")
         self.turnOnGPS()
         self.us("AT+CGNSPWR=1")
         self.us("AT")        
         count_start = 0
-        count_end = 2
+        count_end = 25
         while count_start < count_end:
             command = "AT+CGNSINF"
             responce = "+CGNSINF:"
@@ -401,7 +404,7 @@ class Sim7070(object):
             return "No GPS"
         
     def return_base64(self, res):
-    	print("METHOD return_base64()")
+        print("METHOD return_base64()")
         # res = [' 1', '1', '20221114101637.000', '42.675474', '23.289744', '621.057', '', '', '1', '', '500.0', '500.0', '500.0', '', '3', '', '5683.3', '189.4\r\n\r\nOK\r\n']
         t = res[2].split(".")[0]
         t = (int(t[0:4]), int(t[4:6]), int(t[6:8]), int(t[8:10]), int(t[10:12]), int(t[12:14]), 0, 0)
@@ -420,7 +423,7 @@ class Sim7070(object):
         
         
     def getData(self,response):
-    	print("METHOD getData()")
+        print("METHOD getData()")
         self.us("AT")
         #resp = ['AT+CARECV=0,100\r', '+CARECV: 7,*SET,55', '', 'OK', '']
         #resp = ['AT+CARECV=0,100\r', '+CARECV: 0', '', 'OK', '', '+CADATAIND: 0', '', '+CASTATE: 0,0', '']
@@ -460,7 +463,7 @@ class Sim7070(object):
         return inp
     
     def connectHiGPS(self):
-    	print("METHOD connectHiGPS()") 
+        print("METHOD connectHiGPS()") 
         global registrationTime
         global registrationStart
                 
@@ -487,7 +490,7 @@ class Sim7070(object):
             self.turnOn() 
 
     def sendHiGPS(self,message):
-    	print("METHOD sendHiGPS()")
+        print("METHOD sendHiGPS()")
         
         # modem.sendHiGPS("/input.php?IMEI="+"865456054799968"+"&bat="+'92'+"&data=2,1&alabala="+"This_is_test_data_message...")
         
@@ -609,44 +612,44 @@ class Sim7070(object):
         
         
     def cipClose(self): # затваря конекцията към сървъра
-    	print("METHOD cipClose()")
+        print("METHOD cipClose()")
         self.us("AT+CNACT=0,0")
         
     def sleep(self):
-    	print("METHOD sleep()")
+        print("METHOD sleep()")
         self.dtr.value(1)
 
     def wakeUp(self):
-    	print("METHOD wakeUp()")
+        print("METHOD wakeUp()")
         self.dtr.value(0)
 
     def limitNB(self):
-    	print("METHOD limitNB()")
+        print("METHOD limitNB()")
         self.us("AT+CNMP=38")
         self.us("AT+CMNB=2")
 
     def limitCatM(self):
-    	print("METHOD limitCatM()")
+        print("METHOD limitCatM()")
         self.us("AT+CNMP=38")
         self.us("AT+CMNB=1")
 
     def limit4G(self):
-    	print("METHOD limit4G()")
+        print("METHOD limit4G()")
         self.us("AT+CNMP=38")
         self.us("AT+CMNB=3")
 
     def limit2G(self):
-    	print("METHOD limit2G()")
+        print("METHOD limit2G()")
         self.us("AT+CNMP=13")
 
     def limitOFF(self):
-    	print("METHOD limitOFF()")
+        print("METHOD limitOFF()")
         self.us("AT+CNMP=51")
         self.us("AT+CMNB=3")
         
 
     def getEngLite(self):
-		print("METHOD getEngLite()")
+        print("METHOD getEngLite()")
         self.us("AT+CENG=1,1")
         eng =  self.us("AT+CENG?",1).decode("utf-8").replace("+CENG: 1,1","")
         if "NO SERVICE" in eng:
