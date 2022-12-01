@@ -26,7 +26,7 @@ if modem.isOn() == False:
     modem.turnOn()
     beep()
 
-print("Check if modem is registered to network", modem.isReg())
+print("Check if modem is registered to network -> ", modem.isReg())
 
 imei = modem.getImei()
 #imei = '2111111111111'
@@ -173,3 +173,10 @@ def send_eng_to_the_server():
         print("MODEM NOT CONNECTED")
     modem.cipClose()
     
+# трябва ми метод, който при извикване да чете от ДБ полето за типа на следващият доклад
+# да извърши необходимите измервания
+# да сглоби подходящият доклад за сървъра
+# да го изпрати
+# да провери за чакащи команди
+# ако има да ги изпълни
+# да приключи изпълнението
