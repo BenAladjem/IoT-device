@@ -65,6 +65,9 @@ class User(Commands):
     def send_to_the_server(self, mess):
         print("class User / METHOD send_to_the_server()")
         
+    def send_message_to_the_server(self): # да го тествам утре!
+		print("class User / METHOD send_message_to_the_server()")
+        mess = self.message()
         return modem.sendHiGPS(mess)
 
     def return_result(self):
