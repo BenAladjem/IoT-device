@@ -9,10 +9,11 @@ if modem.isOn() == False:
 
 class Commands:
     global modem
+    imei = modem.getImei()
     def __init__(self, command:str):
         self.command = command
         #self.m = Sim7070()
-        self.imei = modem.getImei()
+        
 
     def recognition_other(self):
         other = ''
@@ -58,7 +59,7 @@ class User(Commands):
         user = my_command[0].replace("#User=","")
         pas = my_command[1].replace("Pass=","")
         pas = pas.replace("$","")
-        message = "/input.php?IMEI="+self.imei+"&MSG=User="+user+";Pass="+pas+";&"
+        message = "/input.php?IMEI="+imei+"&MSG=User="+user+";Pass="+pas+";&"
         return message
     
     def send_to_the_server(self, mess):
@@ -91,7 +92,7 @@ class Phones(Commands):
         phones = my_command.split("+")
         phones = ["+"+x+";" for x in phones if len(x) >= 12] # the phones are here
         phones = "".join(phones)
-        imei = modem.getImei()
+        #imei = modem.getImei()
         message = "/input.php?IMEI="+imei+"&MSG="+phones
         
         modem.turnOffGPS()
@@ -172,7 +173,7 @@ class Mode(Commands):
         mode = "SLEEP-"+c[0]+";WORK-"+c[1]+";CYCLE-"+c[2]+";TRANS-"+c[3]+";OHR-"+c[4]+";INPUT-"+inp+";"
         # тук връща същият МОД, който е полуен
         #imei = modem.getImei()
-        message = "/input.php?IMEI="+self.imei+"&MSG="+mode
+        message = "/input.php?IMEI="+imei+"&MSG="+mode
         
         modem.turnOffGPS()
         modem.cipClose()
@@ -211,7 +212,7 @@ class Loc(Commands):
         pas = "87654321"
         #eng = modem.getEngLite()
         eng = modem.parseEng()
-        imei = modem.getImei()
+        #imei = modem.getImei()
         batt = modem.getBat()#[1]
         batt = ",".join(batt) # returns str
         #cell_info = modem.parseCpsi()
@@ -248,7 +249,7 @@ class Gprs(Commands):
         eng = modem.parseEng()
         print("eng = ", eng)
         gps = modem.gps()
-        imei = modem.getImei()
+        #imei = modem.getImei()
         #imei = self.imei
         batt = modem.getBat()#[1]
         print()  
@@ -297,7 +298,7 @@ class Eng(Commands):
         pas = "87654321"
         #eng = modem.getEngLite()
         eng = modem.parseEng()
-        imei = modem.getImei()
+        #imei = modem.getImei()
         batt = modem.getBat()#[1]
         batt = ",".join(batt) # returns str
         #cell_info = modem.parseCpsi()
@@ -320,7 +321,7 @@ class Eng(Commands):
         pas = "87654321"
         #eng = modem.getEngLite()
         eng = modem.parseEng()
-        imei = modem.getImei()
+        #imei = modem.getImei()
         batt = modem.getBat()#[1]
         batt = ",".join(batt) # returns str
         #cell_info = modem.parseCpsi()
@@ -424,6 +425,7 @@ def recogn_name(command):
          "*GPRS$": "Gprs",
           "*GSM$": "Eng",
          "*ENG$" : "Eng"
+         #GET
         }
         
     class_name = ''
