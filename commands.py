@@ -29,6 +29,7 @@ class Commands:
         None
         
     def send_msg_to_the_server(self, message):
+        print("class Commands:   method send_msg_to_the_server(): ")
         name = "BeniTest"
         pas = "87654321"
         #eng = modem.getEngLite()
@@ -467,6 +468,8 @@ class Set(Commands):
 
     def return_result(self):
         pass
+    
+    
 class Get(Commands):
     CLASS_NAME = "Get"
     def __init__(self, command):
@@ -474,13 +477,16 @@ class Get(Commands):
         
 
     def get_samplings(self):
+        print("class Get:   method get_sampling(): ")
         #кой параметри по ID искаме да предаваме
         pass
 
     def get_samplingsAlarm(self):
+        print("class Get:   method get_samplingAlarm(): ")
         return self.get_samplings() + "440,1;"
 
     def get_dataBat(self):
+        print("class Get:   method get_dataBat(): ")
         # description = "F5100001"865456054799968BAT-0,35,3681GSM:"06A4","2C12"&GPS=$GNRMC,114315.000,A,4240.4835,N,02317.3902,E,1.26,200.42,070222,,,A*70&ACUM=&
         # message = IMEI=865456054799968&User=F5100001&Pass=DOGPE2V3&Description=+description
         name = "BeniTest"
@@ -488,29 +494,32 @@ class Get(Commands):
         batt = modem.getBat()
         batt = ",".join(batt)
         description = name+imei+"BAT-"+batt+"GSM:"+"06A4"+","+"2C12"+"&GPS=$GNRMC,114315.000,A,4240.4835,N,02317.3902,E,1.26,200.42,070222,,,A*70&ACUM=&"
-        message = "IMEI="+imei+"&User="+name+"&Pass="+pas+"&Description="+description
-        
+        message = "/input.php?IMEI="+imei+"&User="+name+"&Pass="+pas+"&Description="+description
         
         return message
 
     def get_data(self):
+        print("class Get:   method get_data(): ")
         pass
 
     def get_setting(self, id):
+        print("class Get:   method get_setting(): ")
         pass
 
     def get_command(self, id):
+        print("class Get:   method get_command(): ")
         pass
     
     def return_result(self):
+        print("class Get:   method return_result(): ")
         my_command = self
         c = my_command.replace("*GET,","")
         command_type = c.replace("$","")
         print("command_type = ", command_type ,"  type = ", type(command_type))
         
-        if command_type == "223":
-            batt_message = self.get_dataBat()
-            self.send_msg_to_the_server(batt_message)
+        #if command_type == "223":
+        batt_message = self.get_dataBat()
+        self.send_msg_to_the_server(batt_message)
 
 
 
