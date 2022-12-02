@@ -8,11 +8,17 @@ if modem.isOn() == False:
     beep()
 
 class Commands:
+    CLASS_NAME = "Commands"
     global modem
+    global imei  #
     imei = modem.getImei()
+    
     def __init__(self, command:str):
         self.command = command
         #self.m = Sim7070()
+        
+    def __repr__(self):
+        return "class name : ",self.CLASS_NAME, "command : ", self.command        
         
 
     def recognition_other(self):
@@ -21,7 +27,26 @@ class Commands:
 
     def return_result(self):
         None
-
+        
+    def send_msg_to_the_server(self, message):
+        name = "BeniTest"
+        pas = "87654321"
+        #eng = modem.getEngLite()
+        eng = modem.parseEng()
+        #imei = modem.getImei()
+        batt = modem.getBat()#[1]
+        batt = ",".join(batt) # returns str
+      
+    
+        modem.turnOffGPS()
+        modem.cipClose()
+        modem.connectHiGPS()
+        if modem.isConnected():
+            print("MODEM IS CONNECTED")
+            modem.sendHiGPS(message)
+        else:
+            print("MODEM NOT CONNECTED")
+        modem.cipClose()
 
 class User(Commands):
     
@@ -35,6 +60,8 @@ class User(Commands):
         name = ""
         pas = ""
         
+    def __repr__(self):
+        return "class name : ",self.CLASS_NAME, "command : ", self.command        
        
     def take_name(self):
         print("class User / METHOD take_name()")
@@ -66,7 +93,7 @@ class User(Commands):
         print("class User / METHOD send_to_the_server()")
         
     def send_message_to_the_server(self): # да го тествам утре!
-		print("class User / METHOD send_message_to_the_server()")
+        print("class User / METHOD send_message_to_the_server()")
         mess = self.message()
         return modem.sendHiGPS(mess)
 
@@ -80,6 +107,7 @@ class User(Commands):
         
 
 class Phones(Commands):
+    CLASS_NAME = "Phones"
     # Output Type: gprs Text:  0.0555 #+359888555197+359889916947+359882107103$
     # Input Type: eng Text: IMEI=865456054799968&User=BeniTest&Pass=M2IP1385&Description="BeniTest"
     #  Input Type: phones Text: IMEI=869139052340391&MSG=+359888555197;+359889916947;+359882107103;&
@@ -87,6 +115,10 @@ class Phones(Commands):
         super().__init__(command)
         self.command = command
         #self.other = other
+        
+    def __repr__(self):
+        return "class name : ",self.CLASS_NAME, "command : ", self.command
+        
     #@staticmethod
     def return_result(self):
         my_command = self
@@ -123,7 +155,7 @@ class Mode(Commands):
     # Input Type: mode Text: IMEI=865456054799968&MSG=SLEEP-0;WORK-1;CYCLE-0;TRANS-7;OHR-0;INPUT-OPEN;&
     
     CLASS_NAME = "Mode"
-    
+    #imei = Commands.imei
     default_report_type  = {
         "No report":"0",
         "GPS possition by SMS":"1",
@@ -137,9 +169,25 @@ class Mode(Commands):
     
     
     
-    def __init__(self, command:str):
+    def __init__(self, command:str): # command:str
         super().__init__(command)
         self.command = command
+        
+        
+    def __repr__(self):
+        return "class name : ",self.CLASS_NAME, "command : ", self.command
+        
+    def prt_imei(self):
+        print("immeeii = ",self.imei)
+        
+    def imei_pr(self):   # Not work !
+        print("iiimei = ", imei)
+        
+    def ret_imei(self):
+        return "immeeii = ",self.imei
+        
+    def imei_ret(self):  # Not work  !
+        return "iiimei = ", imei
         
     
     def take_mode_dict(self): # returns mode command
@@ -174,7 +222,7 @@ class Mode(Commands):
             inp = "CLOSE"
     
         mode = "SLEEP-"+c[0]+";WORK-"+c[1]+";CYCLE-"+c[2]+";TRANS-"+c[3]+";OHR-"+c[4]+";INPUT-"+inp+";"
-        # тук връща същият МОД, който е полуен
+        # тук връща същият МОД, който е получен
         #imei = modem.getImei()
         message = "/input.php?IMEI="+imei+"&MSG="+mode
         
@@ -192,9 +240,12 @@ class ModeQ(Commands):
     # Output Type: gprs Text:  0.0436 *MODE?$
     # Input Type: mode Text: IMEI=865456054799968&MSG=SLEEP-0;WORK-2;CYCLE-0;TRANS-7;OHR-0;INPUT-OPEN;&
     #
-    
+    CLASS_NAME = "ModeQ"
     def __init__(self, command):
         super().__init__(command)
+
+    def __repr__(self):
+        return "class name : ",self.CLASS_NAME, "command : ", self.command
 
 
     def return_result(self):
@@ -203,9 +254,12 @@ class ModeQ(Commands):
 class Loc(Commands):
     # Output Type: gprs Text:  0.0714 *LOC$
     # Input Type: loc Text: IMEI=865456054799968&User=BeniTest&Pass=M2IP1385&Description="BeniTest"865456054799968BAT-0,88,410LOCGSM:"0578","0740"3,"0046,30,11,08ea,284,01,0578"&
-    
+    CLASS_NAME = "Loc"
     def __init__(self, command):
         super().__init__(command)
+        
+    def __repr__(self):
+        return "class name : ",self.CLASS_NAME, "command : ", self.command        
 
 
     def return_result(self):
@@ -236,9 +290,14 @@ class Loc(Commands):
 class Gprs(Commands):
     # Output Type: gprs Text:  0.0752 *GPRS$
     # GPS :  https://www.higps.org/input.php?IMEI=865456054799968&User=F5100001&Pass=DOGPE2V3&Description=%22F5100001%22865456054799968BAT-0,35,3681GSM:%2206A4%22,%222C12%22&GPS=$GNRMC,114315.000,A,4240.4835,N,02317.3902,E,1.26,200.42,070222,,,A*70&ACUM=&
+    CLASS_NAME = "Gprs"
+    
     def __init__(self, command):
         super().__init__(command)
-        #self.other = other        
+        #self.other = other
+        
+    def __repr__(self):
+        return "class name : ",self.CLASS_NAME, "command : ", self.command
      
     def send_GPS_to_the_server(): # return_result methot make the same
         pass
@@ -291,10 +350,13 @@ class Gprs(Commands):
 
 class Eng(Commands):
     #
-    #
+    CLASS_NAME = "Eng"
     def __init__(self, command):
         super().__init__(command)
         #self.other = other
+        
+    def __repr__(self):
+        return "class name : ",self.CLASS_NAME, "command : ", self.command        
         
     def send_eng_to_the_server(self):
         name = "BeniTest"
@@ -345,30 +407,40 @@ class Eng(Commands):
 
 
 class Wifi(Commands):
-    # 
+    CLASS_NAME = "WiFi" 
     # Input Type: eng Text: IMEI=865456054799968&User=BeniTest&Pass=014_23_l&Description=BeniTest865456054799968BAT-0,33,3430GSM:0000,FFFF284,05,066f,2e55,53,066f,2f64,38,066f&wifij=[[-50,d8:50:e6:95:b9:d0,3],[-60,08:55:31:e7:02:82,1],[-61,0a:55:31:e7:02:82,1]]&data=307,1;216,1;264,0;290,0;&er=&
     def __init__(self, command, other):
         super().__init__(command)
         self.other = other
+        
+    def __repr__(self):
+        return "class name : ",self.CLASS_NAME, "command : ", self.command
 
     def return_result(self):
         pass
     
 class Start(Commands):
-    #
+    CLASS_NAME = "Start"
     def __init__(self, command, other):
         super().__init__(command)
         self.other = other
+        
+    def __repr__(self):
+        return "class name : ",self.CLASS_NAME, "command : ", self.command
 
     def return_result(self):
         pass
     
 class Stop1(Commands):
+    CLASS_NAME = "Stop1" 
     # Output Type: gprs Text:  0.0703 *STOP1$
     # Input Type: stop Text: IMEI=865456054799968&MSG=STOP1&
     def __init__(self, command, other):
         super().__init__(command)
         self.other = other
+        
+    def __repr__(self):
+        return "class name : ",self.CLASS_NAME, "command : ", self.command        
 
     def return_result(self):
         pass
@@ -384,19 +456,22 @@ class Stop3(Commands):
         pass
     
 class Set(Commands):
+    CLASS_NAME = "Set"
+
     def __init__(self, command, other):
         super().__init__(command)
         self.other = other
+        
+    def __repr__(self):
+        return "class name : ",self.CLASS_NAME, "command : ", self.command
 
     def return_result(self):
         pass
 class Get(Commands):
-    def __init__(self, command, other):
+    CLASS_NAME = "Get"
+    def __init__(self, command):
         super().__init__(command)
-        self.other = other
-
-    def return_result(self):
-        pass
+        
 
     def get_samplings(self):
         #кой параметри по ID искаме да предаваме
@@ -406,7 +481,17 @@ class Get(Commands):
         return self.get_samplings() + "440,1;"
 
     def get_dataBat(self):
-        pass
+        # description = "F5100001"865456054799968BAT-0,35,3681GSM:"06A4","2C12"&GPS=$GNRMC,114315.000,A,4240.4835,N,02317.3902,E,1.26,200.42,070222,,,A*70&ACUM=&
+        # message = IMEI=865456054799968&User=F5100001&Pass=DOGPE2V3&Description=+description
+        name = "BeniTest"
+        pas = "87654321"
+        batt = modem.getBat()
+        batt = ",".join(batt)
+        description = name+imei+"BAT-"+batt+"GSM:"+"06A4"+","+"2C12"+"&GPS=$GNRMC,114315.000,A,4240.4835,N,02317.3902,E,1.26,200.42,070222,,,A*70&ACUM=&"
+        message = "IMEI="+imei+"&User="+name+"&Pass="+pas+"&Description="+description
+        
+        
+        return message
 
     def get_data(self):
         pass
@@ -416,6 +501,16 @@ class Get(Commands):
 
     def get_command(self, id):
         pass
+    
+    def return_result(self):
+        my_command = self
+        c = my_command.replace("*GET,","")
+        command_type = c.replace("$","")
+        print("command_type = ", command_type ,"  type = ", type(command_type))
+        
+        if command_type == "223":
+            batt_message = self.get_dataBat()
+            self.send_msg_to_the_server(batt_message)
 
 
 
@@ -427,8 +522,8 @@ def recogn_name(command):
         "*MODE?$":"ModeQ",
          "*GPRS$": "Gprs",
           "*GSM$": "Eng",
-         "*ENG$" : "Eng"
-         #GET
+         "*ENG$" : "Eng",
+         "*GET," : "Get"
         }
         
     class_name = ''
