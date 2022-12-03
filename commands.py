@@ -110,6 +110,7 @@ class User(Commands):
 class Phones(Commands):
     CLASS_NAME = "Phones"
     # Output Type: gprs Text:  0.0555 #+359888555197+359889916947+359882107103$
+    
     # Input Type: eng Text: IMEI=865456054799968&User=BeniTest&Pass=M2IP1385&Description="BeniTest"
     #  Input Type: phones Text: IMEI=869139052340391&MSG=+359888555197;+359889916947;+359882107103;&
     def __init__(self, command):
@@ -264,7 +265,7 @@ class Loc(Commands):
 
 
     def return_result(self):
-        #
+    	print("class Loc  METHOD return result()")
 
         name = "BeniTest"
         pas = "87654321"
@@ -301,7 +302,7 @@ class Gprs(Commands):
         return "class name : ",self.CLASS_NAME, "command : ", self.command
      
     def send_GPS_to_the_server(): # return_result methot make the same
-        pass
+        print("class Gprs:   method return_result(): ")
 
 
     def return_result(self):
