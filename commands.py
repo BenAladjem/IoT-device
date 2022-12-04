@@ -519,8 +519,10 @@ class Get(Commands):
         print("command_type = ", command_type ,"  type = ", type(command_type))
         
         #if command_type == "223":
-        batt_message = self.get_dataBat()
-        self.send_msg_to_the_server(batt_message)
+        #batt_message = self.get_dataBat()
+        x = '/input.php?IMEI=865456054799968&User=BeniTest&Pass=87654321&Description=BeniTest865456054799968BAT-0,93,4219GSM:06A4,2C12&GPS=$GNRMC,114315.000,A,4240.4835,N,02317.3902,E,1.26,200.42,070222,,,A*70&ACUM=&'
+        #self.send_msg_to_the_server(batt_message)
+        self.send_msg_to_the_server(x)
 
 
 
