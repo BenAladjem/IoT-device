@@ -110,6 +110,7 @@ class User(Commands):
 class Phones(Commands):
     CLASS_NAME = "Phones"
     # Output Type: gprs Text:  0.0555 #+359888555197+359889916947+359882107103$
+    
     # Input Type: eng Text: IMEI=865456054799968&User=BeniTest&Pass=M2IP1385&Description="BeniTest"
     #  Input Type: phones Text: IMEI=869139052340391&MSG=+359888555197;+359889916947;+359882107103;&
     def __init__(self, command):
@@ -264,7 +265,7 @@ class Loc(Commands):
 
 
     def return_result(self):
-        #
+    	print("class Loc  METHOD return result()")
 
         name = "BeniTest"
         pas = "87654321"
@@ -301,7 +302,7 @@ class Gprs(Commands):
         return "class name : ",self.CLASS_NAME, "command : ", self.command
      
     def send_GPS_to_the_server(): # return_result methot make the same
-        pass
+        print("class Gprs:   method return_result(): ")
 
 
     def return_result(self):
@@ -518,8 +519,10 @@ class Get(Commands):
         print("command_type = ", command_type ,"  type = ", type(command_type))
         
         #if command_type == "223":
-        batt_message = self.get_dataBat()
-        self.send_msg_to_the_server(batt_message)
+        #batt_message = self.get_dataBat()
+        x = '/input.php?IMEI=865456054799968&User=BeniTest&Pass=87654321&Description=BeniTest865456054799968BAT-0,93,4219GSM:06A4,2C12&GPS=$GNRMC,114315.000,A,4240.4835,N,02317.3902,E,1.26,200.42,070222,,,A*70&ACUM=&'
+        #self.send_msg_to_the_server(batt_message)
+        self.send_msg_to_the_server(x)
 
 
 
