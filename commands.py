@@ -24,7 +24,8 @@ class Commands:
     def recognition_other(self):
         other = ''
         return other
-
+    
+    
     def return_result(self):
         None
         
@@ -265,7 +266,7 @@ class Loc(Commands):
 
 
     def return_result(self):
-    	print("class Loc  METHOD return result()")
+        print("class Loc  METHOD return result()")
 
         name = "BeniTest"
         pas = "87654321"
@@ -494,7 +495,8 @@ class Get(Commands):
         pas = "87654321"
         batt = modem.getBat()
         batt = ",".join(batt)
-        description = name+imei+"BAT-"+batt+"GSM:"+"06A4"+","+"2C12"+"&GPS=$GNRMC,114315.000,A,4240.4835,N,02317.3902,E,1.26,200.42,070222,,,A*70&ACUM=&"
+        #description = name+imei+"BAT-"+batt+"GSM:"+"06A4"+","+"2C12"+"&GPS=$GNRMC,114315.000,A,4240.4835,N,02317.3902,E,1.26,200.42,070222,,,A*70&ACUM=&"
+        description = "'"+name+"'"+imei+"BAT-"+batt+"GSM:"+"'"+"06A4"+"','"+"2C12"+"'&GPS=$GNRMC,114315.000,A,4240.4835,N,02317.3902,E,1.26,200.42,070222,,,A*70&ACUM=&"
         message = "/input.php?IMEI="+imei+"&User="+name+"&Pass="+pas+"&Description="+description
         
         return message
@@ -511,20 +513,27 @@ class Get(Commands):
         print("class Get:   method get_command(): ")
         pass
     
-    def return_result(self):
+    def return_result(self): # returns command type
         print("class Get:   method return_result(): ")
-        my_command = self
+        my_command = str(self)
+        print("command_ = ", my_command ,"  type = ", type(my_command))
         c = my_command.replace("*GET,","")
         command_type = c.replace("$","")
         print("command_type = ", command_type ,"  type = ", type(command_type))
         
+        #return command_type
         #if command_type == "223":
-        #batt_message = self.get_dataBat()
-        x = '/input.php?IMEI=865456054799968&User=BeniTest&Pass=87654321&Description=BeniTest865456054799968BAT-0,93,4219GSM:06A4,2C12&GPS=$GNRMC,114315.000,A,4240.4835,N,02317.3902,E,1.26,200.42,070222,,,A*70&ACUM=&'
-        #self.send_msg_to_the_server(batt_message)
-        self.send_msg_to_the_server(x)
+        
+        batt_message = self.get_dataBat()
+        #x = '/input.php?IMEI=865456054799968&User=BeniTest&Pass=87654321&Description="BeniTest"865456054799968BAT-0,93,4219GSM:"06A4","2C12"&GPS=$GNRMC,114315.000,A,4240.4835,N,02317.3902,E,1.26,200.42,070222,,,A*70&ACUM=&'
+        self.send_msg_to_the_server(batt_message)
+        #self.send_msg_to_the_server(x)
+        
+        
+        
+        
 
-
+class_instance = Commands("inst") # only make instance
 
 def recogn_name(command):
     print("METHOD recogn_name()")
@@ -576,8 +585,13 @@ def class_instan_method(command): # връща инстанция към кла�
     return eval(class_name+"('"+command+"')")
 
 
+def class_instance_action(command):# за тест генерира съобщение с нужните данни и ги изпраща към сървъра 
+    com = class_instance.return_result()
+    if com == "223":
+        mess = class_instance.get_dataBat()
+        class_instance.send_msg_to_the_server(mess)
 
-def command_cicle():
+def command_cicle(): # чете и изпълнява чакащите команди от сървъра, докато има
     global class_instance
     print("METHOD command_cicle()")
     c = ""
@@ -592,16 +606,17 @@ def command_cicle():
         class_instance = class_instan_method(c)  # returns class instance
         #print(class_instance.command)
         #print("TRANCE = ", class_instance.command)
+        
         command_action(c)
         
-        #x = class_instance.message()
+        #class_instance_action(c)
         #class_instance.send_to_the_server(x)
         
         
 
 
 
-
+        
 
 #a = Commands("*MODE?$")
 #r = a.recognition_name()
