@@ -54,21 +54,21 @@ class Commands:
 class Get(Commands):
     CLASS_NAME = "Get"
     commands_dict = {
-        "200":"",
-        "217","",
-        "218","",
+        "200":"imei",
+        "217":"",
+        "218":"",
         "219":"",
-        "220":"",
+        "220":"firmware_version",
         "221":"",
         "222":"",
         "223":"get_dataBat",
         "224":"",
-        "225":"",
+        "225":"current_time",
         "227":"",
         "228":"",
         "229":"",
-        "312":"",
-        "565":""
+        "312":"get_settings",
+        "565":"report_type"
         
         }
     def __init__(self, command):
