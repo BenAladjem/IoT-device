@@ -6,19 +6,20 @@ if modem.isOn() == False:
     print("Turning on modem")
     modem.turnOn()
     beep()
-
+imei = modem.getImei()
 class Commands:
     CLASS_NAME = "Commands"
     global modem
-    #global imei  #
-    imei = modem.getImei()
+    global imei  #
+    #imei = modem.getImei()
     
     def __init__(self, command:str):
         self.command = command
+        
         #self.m = Sim7070()
         
-    def __repr__(self):
-        return "class name : ",self.CLASS_NAME, "command : ", self.command        
+    #def __repr__(self):
+        #return "class name : ",self.CLASS_NAME, "command : ", self.command        
         
 
     def recognition_other(self):
@@ -55,19 +56,20 @@ class Get(Commands):
     CLASS_NAME = "Get"
     commands_dict = {
         "200":"imei",
-        "217":"",
-        "218":"",
-        "219":"",
+        "217":"manifacturer",
+        "218":".get_model_number",
+        "219":"serial_number",
         "220":"firmware_version",
-        "221":"",
-        "222":"",
-        "223":"get_dataBat",
-        "224":"",
+        "221":"reboot",
+        "222":"factory_reset",
+        "223":".get_dataBat_message",
+        "224":"memory_free",
         "225":"current_time",
-        "227":"",
-        "228":"",
-        "229":"",
+        "227":"device_type",
+        "228":"hardware_version",
+        "229":"software_version",
         "312":"get_settings",
+        "442":"reset_cause"
         "565":"report_type"
         
         }
@@ -78,19 +80,20 @@ class Get(Commands):
     def get_samplings(self):
         print("class Get:   method get_sampling(): ")
         #кой параметри по ID искаме да предаваме
-        pass
+        
 
     def get_samplingsAlarm(self):
         print("class Get:   method get_samplingAlarm(): ")
         return self.get_samplings() + "440,1;"
 
-    def get_dataBat(self):
+    def get_dataBat_message(self): # is doing data message
         print("class Get:   method get_dataBat(): ")
         # description = "F5100001"865456054799968BAT-0,35,3681GSM:"06A4","2C12"&GPS=$GNRMC,114315.000,A,4240.4835,N,02317.3902,E,1.26,200.42,070222,,,A*70&ACUM=&
         # message = IMEI=865456054799968&User=F5100001&Pass=DOGPE2V3&Description=+description
         name = "BeniTest"
         pas = "87654321"
-        imei = self.imei
+        #imei = self.imei
+        imei = modem.getImei()
         batt = modem.getBat()
         batt = ",".join(batt)
         #description = name+imei+"BAT-"+batt+"GSM:"+"06A4"+","+"2C12"+"&GPS=$GNRMC,114315.000,A,4240.4835,N,02317.3902,E,1.26,200.42,070222,,,A*70&ACUM=&"
@@ -111,18 +114,27 @@ class Get(Commands):
         print("class Get:   method get_command(): ")
         pass
     
+    def read_data_from_the_DB(self):
+        print("class Get:   METHOD write_data_to_the_DB()")
+        
+    
     def return_result(self): # returns command type
         print("class Get:   method return_result(): ")
-        my_command = str(self)
+        my_command = self.command
         print("command_ = ", my_command ,"  type = ", type(my_command))
-        c = my_command.replace("*GET,","")
+        c = my_command.replace("*Get,","")
         command_type = c.replace("$","")
         print("command_type = ", command_type ,"  type = ", type(command_type))
+        method = self.commands_dict[command_type]
+        print("method = ", method, "type method= ", type(method))
+        #self.get_dataBat()
+
+        batt_message = eval(self.CLASS_NAME+method+"('"+self.command+"')")
+        print("batt_message = ",batt_message)
         
-        #return command_type
-        #if command_type == "223":
         
-        batt_message = self.get_dataBat()
+        
+        #batt_message = self.get_dataBat()
         #x = '/input.php?IMEI=865456054799968&User=BeniTest&Pass=87654321&Description="BeniTest"865456054799968BAT-0,93,4219GSM:"06A4","2C12"&GPS=$GNRMC,114315.000,A,4240.4835,N,02317.3902,E,1.26,200.42,070222,,,A*70&ACUM=&'
         self.send_msg_to_the_server(batt_message)
         #self.send_msg_to_the_server(x)
