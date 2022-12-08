@@ -448,7 +448,8 @@ class Sim7070(object):
             print(d_len)
             if d_len == b'':
                 datalen = 0
-                return "Connection Error"
+                print( "Connection Error")
+                #return b''
             else:
                 datalen =  int(d_len)
             print("Data len = ",datalen)
