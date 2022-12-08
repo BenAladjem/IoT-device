@@ -2,16 +2,17 @@ import machine
 import config
 import utime
 
+from commands import Commands
 
 from data import Database
 from modem import Sim7070
 from findyIoT import FindyIoT
+
+
 modem = Sim7070()
-
 d = Database()
-
 f = FindyIoT()
-
+class_instance = Commands("inst") # only make instance
 
 
 def beep():
@@ -20,40 +21,13 @@ def beep():
     pwm0.freq(3000)
     utime.sleep(0.5)
     pwm0.duty(0)
-
-if modem.isOn() == False:
-    print("Turning on modem")
-    modem.turnOn()
-    beep()
-
-print("Check if modem is registered to network -> ", modem.isReg())
-
-imei = modem.getImei()
-#imei = '2111111111111'
-#да проверя дали не е празна базата. Ако няма ИМЕИ, значи е празна
-if not d.read("200"):
-    print("not 200")
-    d.initDefaults(imei)  # зарежда базата с имеи и дефолтни стойности
-    d.store()
-#ccid = modem.getCCID()
-batt = modem.getBat()[1]
-
-latitude = 42.674884  # 254
-longitude = 23.289787  #255
-msl_altitude = 592.877  #256
-timestamp = 1669029794  #257
-speed = 44.2  #258
-gps_d = {"254": "42.674884", "255": "23.289787", "256": "592.877", "257": "1669029794", "258": "44.2"}
-gps_def = {"254": "00", "255": "00", "256": "00", "257": "00", "258": "00"}
-value = d.read("565")
-print(value)
-
     
-
 def write_batt_in_db(batt):
     d.write("223", batt)
     d.store()
-    d.store()
+    d.store()    
+
+
     
 def write_gps(gps):
     for key in gps:
@@ -66,117 +40,110 @@ def write_report_type(r_type):
     d.store()
 
 
-def reading_command():
+def recogn_name(command):
+    print("METHOD recogn_name()")
     
-    com = modem.sendHiGPS("/input.php?IMEI=865456054799968").decode("utf-8")
-    #com = modem.sendHiGPS("/input.php?IMEI=865456054799968&MSG=SLEEP-2;WORK-2;CYCLE-0;TRANS-3;OHR-1;INPUT-OPEN;&").decode("utf-8")
+    '''
+    d = {"#User=":"User",
+             "#+":"Phones",
+         "*MODE-":"Mode",
+        "*MODE?$":"ModeQ",
+         "*GPRS$": "Gprs",
+          "*GSM$": "Eng",
+         "*ENG$" : "Eng",
+         "*GET," : "Get",
+         "*SET," : "Set"
+        }
+    '''    
+    class_name = ''
+    for key in config.d:
+        if key in command:
+            class_name = config.d[key]
+            # else:
+            #     return "False"
+    print("class name = ", class_name)
+    return class_name
 
+
+
+def reading_command(): #изпраща команда обръщение към сървъра, за да прочете чакаща команда, ако има
+    print("METHOD reading_command()")
+    modem.cipClose()
+    modem.connectHiGPS()    
+    com = modem.sendHiGPS("/input.php?IMEI=865456054799968")
+    #modem.cipClose()
     print("com= ", com)
-    
-def send_GPS_to_the_server():
-    gps = ''
-    loc_info = ''
-    gps = modem.gps()
-    imei = modem.getImei()
-    batt = modem.getBat()#[1]
-    batt_descr = ",".join(batt) # returns str    
-    print("gps = ",gps)
-    if gps != False:
-        loc_info = modem.return_base64(gps)
-        #message = "/input.php?IMEI="+imei+"&bat="+batt+"&GPSArray="+loc_info+"=&"
-        message = "/input.php?IMEI="+imei+"&bat="+batt[1]+"&GPSArray="+loc_info+"=&"
+    if len(com) > 1 :
+        com = com.decode("utf-8")
+        
+        return com
     else:
-        # try to insert ENG
-        name = "BeniTest"
-        pas = "87654321"
-        #cell_info = modem.parseCpsi()
-        eng = modem.parseEng()
-        description = name+imei+"BAT-"+batt_descr+"GSM:0000,FFFF"+eng
-        message = "/input.php?IMEI="+imei+"&User="+name+"&Pass="+pas+"&Description="+description
-    
-    # IMEI=865456054799968&bat=77&GPSArray=WyI0Mi42NzQ4NjMiLCAiMjMuMjg5ODM1IiwgIjYwNC44NDcigpsQ=&
-    #message = "/input.php?IMEI="+imei+"&bat="+batt+"&GPSArray="+loc_info+"=&"
-    print("message = "+message)
-    print("isOnGPS =",modem.isOnGPS())
-    modem.turnOffGPS()
-    modem.cipClose()
-    modem.connectHiGPS()
-    print("connect = ",modem.isConnected())
-    if modem.isConnected():
-        print("MODEM IS CONNECTED")
-        modem.sendHiGPS(message)
-        #modem.cipClose()
-    else:
-        print("MODEM NOT CONNECTED")
-    modem.cipClose()
-    
-    
-#message = ("/input.php?IMEI="+str(imei))#+"&bat="+str(batt)+"GPSArray="+loc_info
-#print("message = "+ messaage)
-    
-#modem.sendUDP message:
-#/input.php?IMEI=865456054799968&bat=25&data=LTE;CAT-M1,OnlineOK=&
-    
-#modem.sendUDP message:
-#/input.php?IMEI=865456054799968&bat=30&GPSArray=eyIgpsNjY4NjA0ODY4IjogWzQyLjY3NDc5LCAyMy4yODk4MywgNjQzLjMzNF19=&    
-   
-#  'LTE;CAT-M1,Online,284-05,0gps0066,303617,339,EUTRAN-BAND3,1550,5,5,-10,-67,-44,15OK'
+        return False
 
-def send_cpsi_to_the_server():
-    name = "BeniTest"
-    pas = "87654321"
-    #cpsi = modem.getCPSI()
-    #eng = modem.getEng()
-    imei = modem.getImei()
-    batt = modem.getBat()#[1]
-    batt = ",".join(batt) # returns str
-    cell_info = modem.parseCpsi()
-    #print(type(cpsi),"   cpsi = ",cpsi)
-    #print(type(eng), "   eng = ", eng)
-    print(type(imei),"   imei = ",imei)
-    print(type(batt), "   batt = ", batt)
+def command_action(command): # is calling method return_result
+    print("METHOD command_action()")
+    r = recogn_name(command)
+    print("Class name == ",r)
+    st = ".return_result('"+command+"')"  # add command as argument
+    print("st = ", st)
+
+    return eval(r + st)
+
+def class_instan_method(command): # връща инстанция към класа, за който се отнася командата
+    print("METHOD class_instan()")
+    class_name = recogn_name(command)
+    return eval(class_name+"('"+command+"')")
+
+
+def class_instance_action(command):# за тест генерира съобщение с нужните данни и ги изпраща към сървъра 
+    com = class_instance.return_result()
+    if com == "223":
+        mess = class_instance.get_dataBat()
+        class_instance.send_msg_to_the_server(mess)
+
+def command_cicle(): # чете и изпълнява чакащите команди от сървъра, докато има
+    global class_instance
+    print("METHOD command_cicle()")
+    c = ""
+    while not c == "OK":
+        c = reading_command()
+        if c == "OK":
+            return "No more commands "
+        elif c == "":
+            return "No command"
+                # да се провери какво дава сървъра без чакаща команда
+        #command_action(c)
+        class_instance = class_instan_method(c)  # returns class instance
+        #print(class_instance.command)
+        #print("TRANCE = ", class_instance.command)
+        
+        command_action(c)
+        
+        #class_instance_action(c)
+        #class_instance.send_to_the_server(x)
     
-    #description = name+imei+"BAT-"+batt+"GSM:"+cell_info["tac"]+","+cell_info["cell_id"]+","+cell_info["mcc"]+','+cell_info["mnc"]+','+cell_info["tac"]+','+cell_info["cell_id"]+","+cell_info["rssi"]
-    description = name+imei+"BAT-"+batt+"GSM:0000,FFFF"+cell_info
-    message = "/input.php?IMEI="+imei+"&User="+name+"&Pass="+pas+"&Description="+description
-    
-    modem.turnOffGPS()
-    modem.cipClose()
-    modem.connectHiGPS()
-    if modem.isConnected():
-        print("MODEM IS CONNECTED")
-        modem.sendHiGPS(message)
-    else:
-        print("MODEM NOT CONNECTED")
-    modem.cipClose()
-    
-def send_eng_to_the_server():
-    name = "BeniTest"
-    pas = "87654321"
-    #eng = modem.getEngLite()
-    eng = modem.parseEng()
-    imei = modem.getImei()
-    batt = modem.getBat()#[1]
-    batt = ",".join(batt) # returns str
-    #cell_info = modem.parseCpsi()
-    description = name+imei+"BAT-"+batt+"GSM:0000,FFFF"+eng
-    #description = name+imei+"BAT-"+batt+"GSM:0000,FFFF"+"1,LTECAT-M10,1550,339,-84,-62,-11,5,102,303617,284,05,255"
-    message = "/input.php?IMEI="+imei+"&User="+name+"&Pass="+pas+"&Description="+description       
-    
-    modem.turnOffGPS()
-    modem.cipClose()
-    modem.connectHiGPS()
-    if modem.isConnected():
-        print("MODEM IS CONNECTED")
-        modem.sendHiGPS(message)
-    else:
-        print("MODEM NOT CONNECTED")
-    modem.cipClose()
-    
-# трябва ми метод, който при извикване да чете от ДБ полето за типа на следващият доклад
-# да извърши необходимите измервания
-# да сглоби подходящият доклад за сървъра
-# да го изпрати
-# да провери за чакащи команди
-# ако има да ги изпълни
-# да приключи изпълнението
+if modem.isOn() == False:
+    print("Turning on modem")
+    modem.turnOn()
+    beep()
+
+print("Check if modem is registered to network -> ", modem.isReg())
+
+imei = modem.getImei()
+batt = modem.getBat()[1]
+#да проверя дали не е празна базата. Ако няма ИМЕИ, значи е празна
+if not d.read("200"):
+    print("not 200")
+    d.initDefaults(imei)  # зарежда базата с имеи и дефолтни стойности
+    d.store()
+
+
+latitude = 42.674884  # 254
+longitude = 23.289787  #255
+msl_altitude = 592.877  #256
+timestamp = 1669029794  #257
+speed = 44.2  #258
+gps_d = {"254": "42.674884", "255": "23.289787", "256": "592.877", "257": "1669029794", "258": "44.2"}
+gps_def = {"254": "00", "255": "00", "256": "00", "257": "00", "258": "00"}
+value = d.read("565")
+print(value)
