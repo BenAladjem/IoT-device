@@ -8,7 +8,13 @@ import json
 registrationStart = utime.time()
 registrationTime = 0
 
-
+global log
+log = config.log
+global spase
+spase = config.spase
+global em_row
+em_row = config.em_row
+    
 def beep():
     pwm0 = machine.PWM(machine.Pin(27))
     pwm0.duty(50)
@@ -19,7 +25,11 @@ def beep():
 class Sim7070(object):
     registrationStart = utime.time()
     registrationTime = 0
-
+    
+    global log
+    global spase
+    global em_row
+    
     def __init__(self):
 
         self.tx = config.PmodemTx
@@ -29,6 +39,8 @@ class Sim7070(object):
         self.key = machine.Pin(config.PmodemPWRKey, machine.Pin.OUT)
         self.apn = config.apn  # "findy"
         self.uart = machine.UART(1, self.br, rx=self.rx, tx=self.tx, txbuf=1024, rxbuf=2048)
+        
+
 
     def remov(self, text):
         l = ['\r', '\n', 'OK', '"']
@@ -38,7 +50,10 @@ class Sim7070(object):
         return text
 
     def isOn(self):
-        print("METHOD isOn()")
+        print("METHOD isOn()")        
+        em_row[2] = "isOn()          |"
+        log.append("".join(em_row))
+        #log.append("".join([spase, spase, "isOn()          |", spase]))
         #self.uart = machine.UART(1, self.br, rx=self.rx, tx=self.tx, txbuf=1024, rxbuf=2048)
         self.us("AT")
         at = self.us("AT")
@@ -51,6 +66,10 @@ class Sim7070(object):
 
     def turnOn(self):
         print("METHOD turnOn")
+        em_row[2] = "turnOn()        |"
+        log.append("".join(em_row))
+        
+        #log.append("".join([spase, spase, "turnOn()        |", spase]))
         self.pwr.value(0)
         self.key.value(1)
 
@@ -65,6 +84,9 @@ class Sim7070(object):
 
     def turnOff(self):
         print("METHOD turnOff()")
+        em_row[2] = "turnOff()       |"
+        log.append("".join(em_row))
+        
         try:
             self.us("AT+CPOWD=1")
             utime.sleep(2)
@@ -75,6 +97,11 @@ class Sim7070(object):
 
     def getBat(self):
         print("METHOD getBat()")
+        em_row[2] = "getBat()        |"
+        log.append("".join(em_row))
+        
+        #log.append("".join([spase, spase, "getBat()        |", spase]))
+        
         # My method for tests
         # b = b'AT+CBC\r\r\n+CBC: 0,73,3955\r\n\r\nOK\r\n'
         # c = b'AT+CBC=?\r\r\n+CBC: (0-2),(1-100),(voltage)\r\n\r\nOK\r\n'
@@ -100,6 +127,12 @@ class Sim7070(object):
 
     def us(self, arg, t=0):
         print(">>METHOD us")
+        em_row[2] = "us()            |"
+        log.append("".join(em_row))
+        
+        #log.append("".join([spase, spase, "us()            |", spase]))
+        #a = [spase, spase, "us()            |", spase]
+        #log.append("".join(a))
         answer = []
 
         self.uart.write(arg)
@@ -116,6 +149,10 @@ class Sim7070(object):
 
     def isReg(self):
         print("METHOD isReg()")
+        em_row[2] = "isReg()         |"
+        log.append("".join(em_row))
+        
+        #log.append("".join([spase, spase, "isReg()         |", spase]))
         if not self.isOn():
             return "Modem isn't turned ON"
 
@@ -132,6 +169,10 @@ class Sim7070(object):
         
     def getCPSI(self):  # copy
         print("METHOD getCPSI()")
+        em_row[2] = "getCPSI()      |"
+        log.append("".join(em_row))
+        
+        #log.append("".join([spase, spase, "getCPSI()      |", spase]))
         eng =  self.us("AT+CPSI?",2).decode("utf-8")
         ee = eng.split("CPSI: ")
         self.us("AT+CENG=0")
@@ -146,6 +187,11 @@ class Sim7070(object):
 
     def isConnected(self):
         print("METHOD isConnected()")
+        em_row[2] = "isConnected    |"
+        log.append("".join(em_row))
+        
+        #log.append("".join([spase, spase, "isConnected    |", spase]))
+        
         self.us("AT")
         status = self.us('AT+CNACT?',2).decode('utf-8')
         status = status.replace("AT+CNACT?", "")
@@ -165,6 +211,11 @@ class Sim7070(object):
         
         print()
         print("METHOD getEng()")
+        em_row[2] = "getEng()       |"
+        log.append("".join(em_row))
+        
+        #log.append("".join([spase, spase, "getEng()       |", spase]))
+        
         # b'AT+CENG?\r\r\n+CENG: 1,1,2,LTE CAT-M1\r\n\r\n+CENG: 0,"1550,339,-73,-47,-12,17,102,303617,284,05,255"\r\n+CENG: 1,"1550,414,-88,-51,-20,17"\r\n\r\nOK\r\n'
         # '1,LTE CAT-M1,0,1550,339,-73,-50,-9,20,102,303617,284,05,255'
         #[+CENG: <cell>,"<earfcn>,<pci>,<rsrp>,<rssi>,<rsrq>,<sinr>,<tac>,<cellid> ,<mcc>,<mnc>,<tx power>"<CR><LF>
@@ -200,6 +251,10 @@ class Sim7070(object):
         return res
     
     def parseCpsi(self):
+        em_row[2] = "parseCpsi()    |"
+        log.append("".join(em_row))
+        
+        #log.append("".join([spase, spase, "parseCpsi()    |", spase]))
         # check for gsm or cat-m or nb-iot
         const = 1
         while const < 4:            
@@ -221,6 +276,10 @@ class Sim7070(object):
         
     def parseEng(self):
         print("METHOD parseEng()")
+        em_row[2] = "parseEng()     |"
+        log.append("".join(em_row))
+        
+        #log.append("".join([spase, spase, "parseEng()     |", spase]))
         '''
         eng = ''
         reg = False
@@ -242,6 +301,10 @@ class Sim7070(object):
     
     def getImei(self):
         print("METHOD getImei()")
+        em_row[2] = "getImei()       |"
+        log.append("".join(em_row))
+        
+        #log.append("".join([spase, spase, "getImei()       |", spase]))
         #if not self.isOn():
             #return "Modem isn't turned ON"
         self.us("AT")
@@ -257,6 +320,10 @@ class Sim7070(object):
 
     def getCCID(self):
         print("METHOD getCCID()")
+        em_row[2] = "getCCID()      |"
+        log.append("".join(em_row))
+        
+        #log.append("".join([spase, spase, "getCCID()      |", spase]))
         if not self.isOn():
             return "Modem isn't turned ON"
         self.us("AT")
@@ -272,6 +339,10 @@ class Sim7070(object):
 
     def isOnGPS(self):
         print("METHOD isOnGPS()")
+        em_row[2] = "isOnGPS()      |"
+        log.append("".join(em_row))
+        
+        #log.append("".join([spase, spase, "isOnGPS()      |", spase]))
         self.us("AT")
         command = "AT+CGNSPWR?"
         wrong_command = "ERROR"  # да напиша проверка
@@ -290,12 +361,20 @@ class Sim7070(object):
 
     def turnOnGPS(self):
         print("METHOD turnOnGPS()")
+        em_row[2] = "turnOnGPS()    |"
+        log.append("".join(em_row))
+        
+        #log.append("".join([spase, spase, "turnOnGPS()    |", spase]))
         self.us("AT+CGNSPWR=1")
         gps = self.us("AT+CGNSPWR?").decode("UTF-8")
         return gps
 
     def turnOffGPS(self):
         print("METHOD turnOffGPS()")
+        em_row[2] = "turnOffGPS()   |"
+        log.append("".join(em_row))
+        
+        #log.append("".join([spase, spase, "turnOffGPS()   |", spase]))
         self.us("AT+CGNSPWR=0")
         gps = self.us("AT+CGNSPWR?").decode("UTF-8")
         print("GPS IS TURNED OFF")
@@ -305,6 +384,10 @@ class Sim7070(object):
     def gps(self):
         print()
         print("METHOD gps()")
+        em_row[2] = "gps()          |"
+        log.append("".join(em_row))
+        
+        #log.append("".join([spase, spase, "gps()          |", spase]))
         self.turnOnGPS()
         self.us("AT+CGNSPWR=1")
         self.us("AT")        
@@ -345,7 +428,10 @@ class Sim7070(object):
         
 
     def getGPS(self):
+        em_row[2] = "getGPS()       |"
+        log.append("".join(em_row))
         
+        #log.append("".join([spase, spase, "getGPS()       |", spase]))
         self.us("AT+CGNSPWR=1")
         self.us("AT")
         # b'AT+CGNSINF\r\r\n+CGNSINF: 1,1,20221021130421.000,42.674884,23.289787,592.877,,,1,,3.5,3.6,1.0,,3,,11864.6,143.4\r\n\r\nOK\r\n'
@@ -405,6 +491,10 @@ class Sim7070(object):
         
     def return_base64(self, res):
         print("METHOD return_base64()")
+        em_row[2] = "base64()       |"
+        log.append("".join(em_row))
+        
+        #log.append("".join([spase, spase, "base64()       |", spase]))
         # res = [' 1', '1', '20221114101637.000', '42.675474', '23.289744', '621.057', '', '', '1', '', '500.0', '500.0', '500.0', '', '3', '', '5683.3', '189.4\r\n\r\nOK\r\n']
         t = res[2].split(".")[0]
         t = (int(t[0:4]), int(t[4:6]), int(t[6:8]), int(t[8:10]), int(t[10:12]), int(t[12:14]), 0, 0)
@@ -424,6 +514,10 @@ class Sim7070(object):
         
     def getData(self,response):
         print("METHOD getData()")
+        em_row[2] = "getData()       |"
+        log.append("".join(em_row))
+        
+        #log.append("".join([spase, spase, "getData()       |", spase]))
         self.us("AT")
         #resp = ['AT+CARECV=0,100\r', '+CARECV: 7,*SET,55', '', 'OK', '']
         #resp = ['AT+CARECV=0,100\r', '+CARECV: 0', '', 'OK', '', '+CADATAIND: 0', '', '+CASTATE: 0,0', '']
@@ -464,7 +558,11 @@ class Sim7070(object):
         return inp
     
     def connectHiGPS(self):
-        print("METHOD connectHiGPS()") 
+        print("METHOD connectHiGPS()")
+        em_row[2] = "connectHiGPS()  |"
+        log.append("".join(em_row))
+        
+        #log.append("".join([spase, spase, "connectHiGPS()  |", spase]))
         global registrationTime
         global registrationStart
                 
@@ -492,6 +590,10 @@ class Sim7070(object):
 
     def sendHiGPS(self,message):
         print("METHOD sendHiGPS()")
+        em_row[2] = "sendHiGPS()     |"
+        log.append("".join(em_row))
+        
+        #log.append("".join([spase, spase, "sendHiGPS()     |", spase]))
         
         # modem.sendHiGPS("/input.php?IMEI="+"865456054799968"+"&bat="+'92'+"&data=2,1&alabala="+"This_is_test_data_message...")
         
@@ -614,43 +716,79 @@ class Sim7070(object):
         
     def cipClose(self): # затваря конекцията към сървъра
         print("METHOD cipClose()")
+        em_row[2] = "cipClose()      |"
+        log.append("".join(em_row))
+        
+        #log.append("".join([spase, spase, "cipClose()      |", spase]))
         self.us("AT+CNACT=0,0")
         
     def sleep(self):
         print("METHOD sleep()")
+        em_row[2] = "sleep()        |"
+        log.append("".join(em_row))
+        
+        #log.append("".join([spase, spase, "sleep()        |", spase]))
         self.dtr.value(1)
 
     def wakeUp(self):
         print("METHOD wakeUp()")
+        em_row[2] = "wakeUp()       |"
+        log.append("".join(em_row))
+        
+        #log.append("".join([spase, spase, "wakeUp()       |", spase]))
         self.dtr.value(0)
 
     def limitNB(self):
         print("METHOD limitNB()")
+        em_row[2] = "limitNB()      |"
+        log.append("".join(em_row))
+        
+        #log.append("".join([spase, spase, "limitNB()      |", spase]))
         self.us("AT+CNMP=38")
         self.us("AT+CMNB=2")
 
     def limitCatM(self):
         print("METHOD limitCatM()")
+        em_row[2] = "limitCatM()     |"
+        log.append("".join(em_row))
+        
+        #log.append("".join([spase, spase, "limitCatM()     |", spase]))
         self.us("AT+CNMP=38")
         self.us("AT+CMNB=1")
 
     def limit4G(self):
         print("METHOD limit4G()")
+        em_row[2] = "limit4G()      |"
+        log.append("".join(em_row))
+        
+        #log.append("".join([spase, spase, "limit4G()      |", spase]))
         self.us("AT+CNMP=38")
         self.us("AT+CMNB=3")
 
     def limit2G(self):
         print("METHOD limit2G()")
+        em_row[2] = "limit2G()      |"
+        log.append("".join(em_row))
+        
+        #log.append("".join([spase, spase, "limit2G()      |", spase]))
         self.us("AT+CNMP=13")
 
     def limitOFF(self):
         print("METHOD limitOFF()")
+        em_row[2] = "limitOff()     |"
+        log.append("".join(em_row))
+        
+        #log.append("".join([spase, spase, "limitOff()     |", spase]))
         self.us("AT+CNMP=51")
         self.us("AT+CMNB=3")
         
 
     def getEngLite(self):
         print("METHOD getEngLite()")
+        em_row[2] = "getEngLite()   |"
+        log.append("".join(em_row))
+        
+        #log.append("".join([spase, spase, "getEngLite()   |", spase]))
         self.us("AT+CENG=1,1")
         eng =  self.us("AT+CENG?",1).decode("utf-8").replace("+CENG: 1,1","")
         if "NO SERVICE" in eng:
