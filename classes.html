@@ -1,0 +1,322 @@
+<html>
+  <body>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+      <div class="mermaid">
+    
+        classDiagram
+          class Commands {
+            CLASS_NAME : str
+            command : str
+            imei
+            recognition_other()
+            return_result()
+            send_msg_to_the_server(message)
+          }
+          class Commands {
+            CLASS_NAME : str
+            command : str
+            recognition_other()
+            return_result()
+            send_msg_to_the_server(message)
+          }
+          class Database {
+            data : dict
+            newdata : bool
+            getParameterByHiGPS(higpsId)
+            getParameterData(uri)
+            get_report()
+            initDefaults(imei)
+            read(property, echo)
+            store()
+            write(property, value)
+            write_value(pos, value)
+          }
+          class Eng {
+            CLASS_NAME : str
+            return_result()
+            send_eng_to_the_server()
+          }
+          class Get {
+            CLASS_NAME : str
+            get_command(id)
+            get_data()
+            get_dataBat()
+            get_samplings()
+            get_samplingsAlarm()
+            get_setting(id)
+            return_result()
+          }
+          class Get {
+            CLASS_NAME : str
+            commands_dict : dict
+            get_command(id)
+            get_data()
+            get_dataBat_message()
+            get_samplings()
+            get_samplingsAlarm()
+            get_setting(id)
+            read_data_from_the_DB()
+            return_result()
+          }
+          class Gprs {
+            CLASS_NAME : str
+            return_result()
+            send_GPS_to_the_server()
+          }
+          class Loc {
+            CLASS_NAME : str
+            return_result()
+          }
+          class Mode {
+            CLASS_NAME : str
+            command : str
+            default_report_type : dict
+            imei_pr()
+            imei_ret()
+            prt_imei()
+            ret_imei()
+            return_result()
+            take_mode_dict()
+            take_trance()
+          }
+          class ModeQ {
+            CLASS_NAME : str
+            return_result()
+          }
+          class Phones {
+            CLASS_NAME : str
+            command
+            return_result()
+            send_to_the_server()
+          }
+          class Set {
+            CLASS_NAME : str
+            other
+            return_result()
+          }
+          class Sim7070 {
+            apn
+            br : int
+            key
+            pwr
+            registrationStart
+            registrationTime : int
+            rx
+            tx
+            uart
+            cipClose()
+            connectHiGPS()
+            getBat()
+            getCCID()
+            getCPSI()
+            getData(response)
+            getEng()
+            getGPS()
+            getImei()
+            isConnected()
+            isOn()
+            isOnGPS()
+            isReg()
+            limit2G()
+            limit4G()
+            limitCatM()
+            limitNB()
+            limitOFF()
+            remov(text)
+            sendHiGPS(message)
+            sleep()
+            turnOff()
+            turnOffGPS()
+            turnOn()
+            turnOnGPS()
+            us(arg, t)
+            wakeUp()
+          }
+          class Sim7070 {
+            apn
+            br : int
+            key
+            pwr
+            registrationStart
+            registrationTime : int
+            rx
+            tx
+            uart
+            cipClose()
+            connectHiGPS()
+            getBat()
+            getCCID()
+            getCPSI()
+            getData(response)
+            getEng()
+            getEngLite()
+            getGPS()
+            getImei()
+            gps()
+            isConnected()
+            isOn()
+            isOnGPS()
+            isReg()
+            limit2G()
+            limit4G()
+            limitCatM()
+            limitNB()
+            limitOFF()
+            parseCpsi()
+            parseEng()
+            remov(text)
+            return_base64(res)
+            sendHiGPS(message)
+            sleep()
+            turnOff()
+            turnOffGPS()
+            turnOn()
+            turnOnGPS()
+            us(arg, t)
+            wakeUp()
+          }
+          class Start {
+            CLASS_NAME : str
+            other
+            return_result()
+          }
+          class Stop1 {
+            CLASS_NAME : str
+            other
+            return_result()
+          }
+          class Stop3 {
+            other
+            return_result()
+          }
+          class User {
+            batt
+            d
+            imei
+            m
+            password : str
+            user : str
+          }
+          class User {
+            CLASS_NAME : str
+            command : str
+            main()
+            message()
+            return_result()
+            send_message_to_the_server()
+            send_to_the_server(mess)
+            take_name()
+            take_pass()
+          }
+          class Wifi {
+            CLASS_NAME : str
+            other
+            return_result()
+          }
+          class buffer {
+            get(bufferID)
+            set(bufferID)
+          }
+          class database {
+            data : dict
+            newdata : bool
+            getParameterByHiGPS(higpsId)
+            getParameterData(uri)
+            initDefaults()
+            read(property, echo)
+            store()
+            write(property, value)
+          }
+          class device {
+            factoryReset()
+            freeMemory()
+            getBat()
+            getTimestamp()
+            memoryTotal()
+            restart()
+            serialNumber()
+          }
+          class findyIoT {
+            imei : str
+            downloadUpdate()
+            factoryReset()
+            get_command(id)
+            get_data(datalist)
+            get_dataBat()
+            get_samplings()
+            get_samplingsAlarm()
+            get_setting(id)
+            main(command, execute)
+            parse(rsp)
+            restart()
+            send(commandtype, execute)
+            serialNumber()
+            set_get(response)
+            set_set(response)
+            update()
+            updateTime()
+          }
+          class fw {
+            adcMeasure(n)
+            goodNight(timeS)
+            measure()
+            prepareSleep(t, trig)
+            report(alarm)
+            start()
+          }
+          class sim7070 {
+            apn : str
+            br : int
+            dtr
+            key
+            pwr
+            ri
+            rx : int
+            status
+            tx : int
+            uart
+            cipClose()
+            connectHiGPS(num)
+            getBat()
+            getCCID()
+            getCPSI()
+            getData(response)
+            getEng()
+            getEngLite()
+            getImei()
+            getTime()
+            getTimeF()
+            isConnected()
+            isOn()
+            isReg()
+            limit2G()
+            limit4G()
+            limitCatM()
+            limitNB()
+            limitOFF()
+            parseTime(timeString)
+            sendHiGPS(message)
+            sleep()
+            turnOff()
+            turnOn()
+            us(arg, t)
+            wakeUp()
+          }
+          Eng --|> Commands
+          Get --|> Commands
+          Gprs --|> Commands
+          Loc --|> Commands
+          Mode --|> Commands
+          ModeQ --|> Commands
+          Phones --|> Commands
+          Set --|> Commands
+          Start --|> Commands
+          Stop1 --|> Commands
+          Stop3 --|> Commands
+          User --|> Commands
+          Wifi --|> Commands
+          Get --|> Commands
+  
+       </div>
+  </body>
+</html>

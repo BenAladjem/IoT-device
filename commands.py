@@ -1,35 +1,59 @@
 from modem import *
+#import modem
+from config import *
 import utime
 
-modem = Sim7070()
-if modem.isOn() == False:
-    print("Turning on modem")
-    modem.turnOn()
-    beep()
+global log
+log = config.log
+global spase
+spase = config.spase
+global em_row
+
+this_column = 1
+num_col_in_log = 4
 
 class Commands:
     CLASS_NAME = "Commands"
     global modem
     global imei  #
-    imei = modem.getImei()
+    #imei = modem.getImei()
     
-    def __init__(self, command:str):
+    global log
+    global spase
+    global em_row
+    
+    def __init__(self, command):
         self.command = command
         #self.m = Sim7070()
         
     def __repr__(self):
-        return "class name : ",self.CLASS_NAME, "command : ", self.command        
+        return "class name : ",self.CLASS_NAME, "command : ", self.command
+    
+    
+    def log_fill(self, method):
+        if len(method) > 16:
+            method = method[:16] + "|"
+        elif len(method) < 16:
+            method = method + " "*(16-len(method)) + "|"
+        else:
+            method = method +"|"
+        em_row = [spase]*num_col_in_log
+        em_row[this_column] = method
+        log.append("".join(em_row))
         
 
     def recognition_other(self):
         other = ''
         return other
-
+    
+    
     def return_result(self):
         None
         
     def send_msg_to_the_server(self, message):
         print("class Commands:   method send_msg_to_the_server(): ")
+        self.log_fill("send_msg_serv() |")
+
         name = "BeniTest"
         pas = "87654321"
         #eng = modem.getEngLite()
@@ -48,6 +72,114 @@ class Commands:
         else:
             print("MODEM NOT CONNECTED")
         modem.cipClose()
+        
+    def send_GPS_to_the_server():
+        self.l("send_msg_serv() |")
+        
+        gps = ''
+        loc_info = ''
+        gps = modem.gps()
+        imei = modem.getImei()
+        batt = modem.getBat()#[1]
+        batt_descr = ",".join(batt) # returns str    
+        print("gps = ",gps)
+        if gps != False:
+            loc_info = modem.return_base64(gps)
+            #message = "/input.php?IMEI="+imei+"&bat="+batt+"&GPSArray="+loc_info+"=&"
+            message = "/input.php?IMEI="+imei+"&bat="+batt[1]+"&GPSArray="+loc_info+"=&"
+        else:
+            # try to insert ENG
+            name = "BeniTest"
+            pas = "87654321"
+            #cell_info = modem.parseCpsi()
+            eng = modem.parseEng()
+            description = name+imei+"BAT-"+batt_descr+"GSM:0000,FFFF"+eng
+            message = "/input.php?IMEI="+imei+"&User="+name+"&Pass="+pas+"&Description="+description
+        
+        # IMEI=865456054799968&bat=77&GPSArray=WyI0Mi42NzQ4NjMiLCAiMjMuMjg5ODM1IiwgIjYwNC44NDcigpsQ=&
+        #message = "/input.php?IMEI="+imei+"&bat="+batt+"&GPSArray="+loc_info+"=&"
+        print("message = "+message)
+        print("isOnGPS =",modem.isOnGPS())
+        modem.turnOffGPS()
+        modem.cipClose()
+        modem.connectHiGPS()
+        print("connect = ",modem.isConnected())
+        if modem.isConnected():
+            print("MODEM IS CONNECTED")
+            modem.sendHiGPS(message)
+            #modem.cipClose()
+        else:
+            print("MODEM NOT CONNECTED")
+        modem.cipClose()
+        
+        
+    #message = ("/input.php?IMEI="+str(imei))#+"&bat="+str(batt)+"GPSArray="+loc_info
+    #print("message = "+ messaage)
+        
+    #modem.sendUDP message:
+    #/input.php?IMEI=865456054799968&bat=25&data=LTE;CAT-M1,OnlineOK=&
+        
+    #modem.sendUDP message:
+    #/input.php?IMEI=865456054799968&bat=30&GPSArray=eyIgpsNjY4NjA0ODY4IjogWzQyLjY3NDc5LCAyMy4yODk4MywgNjQzLjMzNF19=&    
+       
+    #  'LTE;CAT-M1,Online,284-05,0gps0066,303617,339,EUTRAN-BAND3,1550,5,5,-10,-67,-44,15OK'
+
+    def send_cpsi_to_the_server():
+        self.l("send_cpsi_serv()|")
+        
+        name = "BeniTest"
+        pas = "87654321"
+        #cpsi = modem.getCPSI()
+        #eng = modem.getEng()
+        imei = modem.getImei()
+        batt = modem.getBat()#[1]
+        batt = ",".join(batt) # returns str
+        cell_info = modem.parseCpsi()
+        #print(type(cpsi),"   cpsi = ",cpsi)
+        #print(type(eng), "   eng = ", eng)
+        print(type(imei),"   imei = ",imei)
+        print(type(batt), "   batt = ", batt)
+        
+        #description = name+imei+"BAT-"+batt+"GSM:"+cell_info["tac"]+","+cell_info["cell_id"]+","+cell_info["mcc"]+','+cell_info["mnc"]+','+cell_info["tac"]+','+cell_info["cell_id"]+","+cell_info["rssi"]
+        description = name+imei+"BAT-"+batt+"GSM:0000,FFFF"+cell_info
+        message = "/input.php?IMEI="+imei+"&User="+name+"&Pass="+pas+"&Description="+description
+        
+        modem.turnOffGPS()
+        modem.cipClose()
+        modem.connectHiGPS()
+        if modem.isConnected():
+            print("MODEM IS CONNECTED")
+            modem.sendHiGPS(message)
+        else:
+            print("MODEM NOT CONNECTED")
+        modem.cipClose()
+        
+    def send_eng_to_the_server():
+        self.l("send_eng_serv() |")
+        
+        name = "BeniTest"
+        pas = "87654321"
+        #eng = modem.getEngLite()
+        eng = modem.parseEng()
+        imei = modem.getImei()
+        batt = modem.getBat()#[1]
+        batt = ",".join(batt) # returns str
+        #cell_info = modem.parseCpsi()
+        description = name+imei+"BAT-"+batt+"GSM:0000,FFFF"+eng
+        #description = name+imei+"BAT-"+batt+"GSM:0000,FFFF"+"1,LTECAT-M10,1550,339,-84,-62,-11,5,102,303617,284,05,255"
+        message = "/input.php?IMEI="+imei+"&User="+name+"&Pass="+pas+"&Description="+description       
+        
+        modem.turnOffGPS()
+        modem.cipClose()
+        modem.connectHiGPS()
+        if modem.isConnected():
+            print("MODEM IS CONNECTED")
+            modem.sendHiGPS(message)
+        else:
+            print("MODEM NOT CONNECTED")
+        modem.cipClose() 
+        
+    
 
 class User(Commands):
     
@@ -65,6 +197,8 @@ class User(Commands):
         return "class name : ",self.CLASS_NAME, "command : ", self.command        
        
     def take_name(self):
+        self.log_fill("User/take_name()|")
+        
         print("class User / METHOD take_name()")
         my_command = self.command
         my_command = my_command.split(":")
@@ -74,6 +208,8 @@ class User(Commands):
     
     def take_pass(self):
         print("class User / METHOD take_pass()")
+        self.log_fill("User/take_pass()|")
+        
         my_command = self.command
         my_command = my_command.split(":")
         pas = my_command[1].replace("Pass=","")
@@ -82,6 +218,9 @@ class User(Commands):
     
     def message(self):
         print("class User / METHOD message()")
+        self.log_fill("User/message()  |")
+
+        
         my_command = self.command
         my_command = my_command.split(":")
         user = my_command[0].replace("#User=","")
@@ -93,18 +232,29 @@ class User(Commands):
     def send_to_the_server(self, mess):
         print("class User / METHOD send_to_the_server()")
         
-    def send_message_to_the_server(self): # да го тествам утре!
-        print("class User / METHOD send_message_to_the_server()")
-        mess = self.message()
-        return modem.sendHiGPS(mess)
+
 
     def return_result(self):
-        print("class User / METHOD return_result()")
+        print("class User / METHOD return_resul()")
+        self.log_fill("User/ret_res()  |")
+
         return modem.sendHiGPS("/input.php?IMEI=865456054799968&MSG=User=TRTRTRTR;Pass=M2IP1385;&")
     
     def main(self):
         print("class User / METHOD main()")
-        pass
+        self.log_fill("User/main()")
+        
+    
+    def set_user(self,response):
+        print("Set User")
+        self.log_fill("User/set_user() |")
+        
+        print(response)
+        #User=12312341:Pass=12345678$AT
+        splitted = response.split("=")
+        name = splitted[1].split(":")
+        self.db.write(b'name',name[0])
+        self.send("user", False)
         
 
 class Phones(Commands):
@@ -123,6 +273,8 @@ class Phones(Commands):
         
     #@staticmethod
     def return_result(self):
+        self.log_fill("Phones/ret_res()|")
+
         my_command = self
         my_command = my_command.replace("#","")
         my_command = my_command.replace("$","")                                
@@ -131,23 +283,19 @@ class Phones(Commands):
         phones = "".join(phones)
         #imei = modem.getImei()
         message = "/input.php?IMEI="+imei+"&MSG="+phones
-        
-        modem.turnOffGPS()
-        modem.cipClose()
-        modem.connectHiGPS()
-        if modem.isConnected():
-            print("MODEM IS CONNECTED")
-            modem.sendHiGPS(message)
-        else:
-            print("MODEM NOT CONNECTED")
-        modem.cipClose()
-        
-        #print("command = ",self)
-    
-    def send_to_the_server(self):
-        print("SMT")
-        print(self)
 
+
+    def set_phones(self,response):
+        print("Set phones")
+        self.log_fill("Phones/set_ph() |")
+
+        #+359888555197+359889916947+359882107103$AT\r'
+        splitted = response.split("+")
+        self.db.write(b'phone1',"+"+splitted[1])
+        self.db.write(b'phone2',"+"+splitted[2])
+        phone3 = splitted[3].split("$")
+        self.db.write(b'phone3',"+"+phone3[0])
+        self.send("phone", False)
 
 
 class Mode(Commands):
@@ -194,6 +342,8 @@ class Mode(Commands):
     
     def take_mode_dict(self): # returns mode command
         print("class Mode / METHOD take_mode_dict()")
+        em_row = [spase]*num_col_in_log
+        
         my_command = self.command
         mode = my_command.replace("*MODE-","")
         mode = mode.replace("$","")
@@ -211,6 +361,8 @@ class Mode(Commands):
 
     def return_result(self):
         print("class Mode / METHOD return_result()")
+        self.log_fill("Mode/ret_res()  |")
+
         #modem.sendHiGPS("/input.php?IMEI=865456054799968&MSG=SLEEP-1;WORK-3;CYCLE-0;TRANS-7;OHR-1;INPUT-OPEN;&")
         my_command = self
         c = my_command.replace("*MODE-","")
@@ -252,6 +404,8 @@ class ModeQ(Commands):
 
     def return_result(self):
         print(f"ModeQ +")
+        self.log_fill("ModeQ+/ret_res() |")
+
         
 class Loc(Commands):
     # Output Type: gprs Text:  0.0714 *LOC$
@@ -265,7 +419,8 @@ class Loc(Commands):
 
 
     def return_result(self):
-    	print("class Loc  METHOD return result()")
+        print("class Loc  METHOD return result()")
+        self.log_fill("Loc/ret_res()   |")
 
         name = "BeniTest"
         pas = "87654321"
@@ -306,20 +461,22 @@ class Gprs(Commands):
 
 
     def return_result(self):
+        self.log_fill("Gprs/ret_res()  |")
+        
         print("class Gprs:   method return_result(): ")
         # send GPS to the server
         gps = ''
         loc_info = ''
-        eng = modem.parseEng()
+        eng = self.modem.parseEng()
         print("eng = ", eng)
-        gps = modem.gps()
+        gps = self.modem.gps()
         #imei = modem.getImei()
         #imei = self.imei
-        batt = modem.getBat()#[1]
+        batt = self.modem.getBat()#[1]
         print()  
         print("gps = ",gps)
         if gps != False:
-            loc_info = modem.return_base64(gps)
+            loc_info = self.modem.return_base64(gps)
         #message = "/input.php?IMEI="+imei+"&bat="+batt+"&GPSArray="+loc_info+"=&"
             message = "/input.php?IMEI="+imei+"&bat="+batt[1]+"&GPSArray="+loc_info+"=&"
             modem.turnOffGPS()
@@ -356,6 +513,7 @@ class Eng(Commands):
     def __init__(self, command):
         super().__init__(command)
         #self.other = other
+               
         
     def __repr__(self):
         return "class name : ",self.CLASS_NAME, "command : ", self.command        
@@ -384,12 +542,14 @@ class Eng(Commands):
         modem.cipClose()
 
     def return_result(self):
+        self.log_fill("Eng/ret_res()")
+
         name = "BeniTest"
         pas = "87654321"
         #eng = modem.getEngLite()
-        eng = modem.parseEng()
+        eng = self.modem.parseEng()
         #imei = modem.getImei()
-        batt = modem.getBat()#[1]
+        batt = self.modem.getBat()#[1]
         batt = ",".join(batt) # returns str
         #cell_info = modem.parseCpsi()
         description = name+imei+"BAT-"+batt+"GSM:0000,FFFF"+eng
@@ -419,7 +579,8 @@ class Wifi(Commands):
         return "class name : ",self.CLASS_NAME, "command : ", self.command
 
     def return_result(self):
-        pass
+        self.log_fill("WiFi/ret_res()  |")
+        
     
 class Start(Commands):
     CLASS_NAME = "Start"
@@ -431,7 +592,8 @@ class Start(Commands):
         return "class name : ",self.CLASS_NAME, "command : ", self.command
 
     def return_result(self):
-        pass
+        self.log_fill("Start/ret_res() |")
+        
     
 class Stop1(Commands):
     CLASS_NAME = "Stop1" 
@@ -445,33 +607,38 @@ class Stop1(Commands):
         return "class name : ",self.CLASS_NAME, "command : ", self.command        
 
     def return_result(self):
-        pass
+        self.log_fill("Stop1/ret_res() |")
+        
 
 class Stop3(Commands):
     # Output Type: gprs Text:  0.0685 *STOP3$
     # Input Type: stop Text: IMEI=865456054799968&MSG=STOP3&
-    def __init__(self, command, other):
+    def __init__(self, command):
         super().__init__(command)
-        self.other = other
 
     def return_result(self):
-        pass
+        self.log_fill("Stop3/ret_res() |")
+        
     
 class Set(Commands):
     CLASS_NAME = "Set"
 
-    def __init__(self, command, other):
+    def __init__(self, command):
         super().__init__(command)
-        self.other = other
         
     def __repr__(self):
         return "class name : ",self.CLASS_NAME, "command : ", self.command
 
     def return_result(self):
-        pass
+        self.log_fill("Set/return_res()|")
+        
+        #log.append("".join([ spase, "Set/return_res()|", spase, spase]))
+        print("class Set : METHOD return result()")
     
     
 class Get(Commands):
+    # да се пренапише метода. Трябва да чете от паметта стойността на параметъра,
+    # който отговаря на номера команда и да върне стойността към сървъра
     CLASS_NAME = "Get"
     def __init__(self, command):
         super().__init__(command)
@@ -479,55 +646,73 @@ class Get(Commands):
 
     def get_samplings(self):
         print("class Get:   method get_sampling(): ")
+        self.log_fill("Get/get_sampl() |")
+        
         #кой параметри по ID искаме да предаваме
-        pass
+    
 
     def get_samplingsAlarm(self):
         print("class Get:   method get_samplingAlarm(): ")
+        self.log_fill("Get/get_sampAl()|")
+
         return self.get_samplings() + "440,1;"
 
     def get_dataBat(self):
         print("class Get:   method get_dataBat(): ")
+        self.log_fill("Get/g_dataBat()|")
+        
         # description = "F5100001"865456054799968BAT-0,35,3681GSM:"06A4","2C12"&GPS=$GNRMC,114315.000,A,4240.4835,N,02317.3902,E,1.26,200.42,070222,,,A*70&ACUM=&
         # message = IMEI=865456054799968&User=F5100001&Pass=DOGPE2V3&Description=+description
         name = "BeniTest"
         pas = "87654321"
         batt = modem.getBat()
         batt = ",".join(batt)
-        description = name+imei+"BAT-"+batt+"GSM:"+"06A4"+","+"2C12"+"&GPS=$GNRMC,114315.000,A,4240.4835,N,02317.3902,E,1.26,200.42,070222,,,A*70&ACUM=&"
+        #description = name+imei+"BAT-"+batt+"GSM:"+"06A4"+","+"2C12"+"&GPS=$GNRMC,114315.000,A,4240.4835,N,02317.3902,E,1.26,200.42,070222,,,A*70&ACUM=&"
+        description = "'"+name+"'"+imei+"BAT-"+batt+"GSM:"+"'"+"06A4"+"','"+"2C12"+"'&GPS=$GNRMC,114315.000,A,4240.4835,N,02317.3902,E,1.26,200.42,070222,,,A*70&ACUM=&"
         message = "/input.php?IMEI="+imei+"&User="+name+"&Pass="+pas+"&Description="+description
         
         return message
 
     def get_data(self):
         print("class Get:   method get_data(): ")
-        pass
+        self.log_fill("Get/get_data()|")
+        
 
     def get_setting(self, id):
         print("class Get:   method get_setting(): ")
-        pass
+        self.log_fill("Get/get_settin()|")
+        
 
     def get_command(self, id):
         print("class Get:   method get_command(): ")
-        pass
+        self.log_fill("Get/get_command()|")
+        
     
-    def return_result(self):
+    def return_result(self): # returns command type
         print("class Get:   method return_result(): ")
-        my_command = self
+        self.log_fill("Get/return_res()")
+
+        my_command = str(self)
+        print("command_ = ", my_command ,"  type = ", type(my_command))
         c = my_command.replace("*GET,","")
         command_type = c.replace("$","")
         print("command_type = ", command_type ,"  type = ", type(command_type))
         
+        #return command_type
         #if command_type == "223":
-        #batt_message = self.get_dataBat()
-        x = '/input.php?IMEI=865456054799968&User=BeniTest&Pass=87654321&Description=BeniTest865456054799968BAT-0,93,4219GSM:06A4,2C12&GPS=$GNRMC,114315.000,A,4240.4835,N,02317.3902,E,1.26,200.42,070222,,,A*70&ACUM=&'
-        #self.send_msg_to_the_server(batt_message)
-        self.send_msg_to_the_server(x)
-
-
+        
+        batt_message = self.get_dataBat()
+        #x = '/input.php?IMEI=865456054799968&User=BeniTest&Pass=87654321&Description="BeniTest"865456054799968BAT-0,93,4219GSM:"06A4","2C12"&GPS=$GNRMC,114315.000,A,4240.4835,N,02317.3902,E,1.26,200.42,070222,,,A*70&ACUM=&'
+        self.send_msg_to_the_server(batt_message)
+        #self.send_msg_to_the_server(x)
+'''
+class_instance = Commands("inst") # only make instance
 
 def recogn_name(command):
     print("METHOD recogn_name()")
+    
+    '''
+'''
     d = {"#User=":"User",
              "#+":"Phones",
          "*MODE-":"Mode",
@@ -535,13 +720,15 @@ def recogn_name(command):
          "*GPRS$": "Gprs",
           "*GSM$": "Eng",
          "*ENG$" : "Eng",
-         "*GET," : "Get"
+         "*GET," : "Get",
+         "*SET," : "Set"
         }
-        
+     '''
+'''
     class_name = ''
-    for key in d:
+    for key in config.d:
         if key in command:
-            class_name = d[key]
+            class_name = config.d[key]
             # else:
             #     return "False"
     return class_name
@@ -576,8 +763,13 @@ def class_instan_method(command): # връща инстанция към кла�
     return eval(class_name+"('"+command+"')")
 
 
+def class_instance_action(command):# за тест генерира съобщение с нужните данни и ги изпраща към сървъра 
+    com = class_instance.return_result()
+    if com == "223":
+        mess = class_instance.get_dataBat()
+        class_instance.send_msg_to_the_server(mess)
 
-def command_cicle():
+def command_cicle(): # чете и изпълнява чакащите команди от сървъра, докато има
     global class_instance
     print("METHOD command_cicle()")
     c = ""
@@ -592,21 +784,18 @@ def command_cicle():
         class_instance = class_instan_method(c)  # returns class instance
         #print(class_instance.command)
         #print("TRANCE = ", class_instance.command)
+        
         command_action(c)
         
-        #x = class_instance.message()
+        #class_instance_action(c)
         #class_instance.send_to_the_server(x)
         
         
 
+'''
 
-
-
+        
 
 #a = Commands("*MODE?$")
 #r = a.recognition_name()
 #eval(r+".return_result(a)")
-
-#b = Commands("*MODE-2468135$")
-#rr = b.recognition_name()
-#eval(rr+".return_result(b)"
