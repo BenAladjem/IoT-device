@@ -69,7 +69,7 @@ class Get(Commands):
         "228":"hardware_version",
         "229":"software_version",
         "312":"get_settings",
-        "442":"reset_cause"
+        "442":"reset_cause",
         "565":"report_type"
         
         }
