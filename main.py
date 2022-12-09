@@ -2,7 +2,7 @@ import machine
 import config
 import utime
 
-from commands import Commands
+from commands import *
 
 from data import Database
 from modem import Sim7070
@@ -14,8 +14,19 @@ d = Database()
 f = FindyIoT()
 class_instance = Commands("inst") # only make instance
 
+#log = []
+#spase = "                |"
+#log_empty_row  = [spase]*4
+#log_1_row = ["Main            |", "Command         |", "Modem           |", "DataBase        |"]
+#log.append(log_1_row)
+#log.append(log_empty_row)
+
+def print_log(log):
+    for row in log:
+        print(row)
 
 def beep():
+    config.log.append("".join(["beep               |", spase, spase, spase]))
     pwm0 = machine.PWM(machine.Pin(27))
     pwm0.duty(50)
     pwm0.freq(3000)
@@ -41,20 +52,9 @@ def write_report_type(r_type):
 
 
 def recogn_name(command):
+    config.log.append("".join(["recogn_name     |", spase, spase, spase]))
     print("METHOD recogn_name()")
-    
-    '''
-    d = {"#User=":"User",
-             "#+":"Phones",
-         "*MODE-":"Mode",
-        "*MODE?$":"ModeQ",
-         "*GPRS$": "Gprs",
-          "*GSM$": "Eng",
-         "*ENG$" : "Eng",
-         "*GET," : "Get",
-         "*SET," : "Set"
-        }
-    '''    
+       
     class_name = ''
     for key in config.d:
         if key in command:
@@ -67,6 +67,7 @@ def recogn_name(command):
 
 
 def reading_command(): #изпраща команда обръщение към сървъра, за да прочете чакаща команда, ако има
+    config.log.append("".join(["reading_command |", spase, spase, spase]))
     print("METHOD reading_command()")
     modem.cipClose()
     modem.connectHiGPS()    
@@ -81,6 +82,7 @@ def reading_command(): #изпраща команда обръщение към 
         return False
 
 def command_action(command): # is calling method return_result
+    config.log.append("".join(["command_action  |", spase, spase, spase]))
     print("METHOD command_action()")
     r = recogn_name(command)
     print("Class name == ",r)
@@ -90,12 +92,14 @@ def command_action(command): # is calling method return_result
     return eval(r + st)
 
 def class_instan_method(command): # връща инстанция към класа, за който се отнася командата
+    config.log.append("".join(["class_inst_met  |", spase, spase, spase]))
     print("METHOD class_instan()")
     class_name = recogn_name(command)
     return eval(class_name+"('"+command+"')")
 
 
 def class_instance_action(command):# за тест генерира съобщение с нужните данни и ги изпраща към сървъра 
+    config.log.append("".join(["class_instance_act   |", spase, spase, spase]))
     com = class_instance.return_result()
     if com == "223":
         mess = class_instance.get_dataBat()
@@ -103,6 +107,7 @@ def class_instance_action(command):# за тест генерира съобще
 
 def command_cicle(): # чете и изпълнява чакащите команди от сървъра, докато има
     global class_instance
+    config.log.append("".join(["command_cicle   |", spase, spase, spase]))
     print("METHOD command_cicle()")
     c = ""
     while not c == "OK":
