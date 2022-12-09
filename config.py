@@ -14,6 +14,16 @@ Pinput14 = 14
 Pinput4 = 4
 Preed = 2
 
+
+
+log = []
+spase = "                |"
+log_empty_row  = "".join([spase]*4)
+em_row = [spase]*4
+log_1_row = "".join(["Main            |", "Command         |", "Modem           |", "DataBase        |"])
+log.append(log_1_row)
+log.append(log_empty_row)
+
 empty_question = "/input.php?IMEI=865456054799968"
 
 #def recogn_name(command):  in Commands
