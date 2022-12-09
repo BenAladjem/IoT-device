@@ -1,6 +1,7 @@
 from modem import *
-from config import d
+from config import *
 import utime
+
 '''
 modem = Sim7070()
 if modem.isOn() == False:
@@ -8,11 +9,21 @@ if modem.isOn() == False:
     modem.turnOn()
     beep()
 '''
+
+global log
+log = config.log
+global spase
+spase = config.spase
+
+
 class Commands:
     CLASS_NAME = "Commands"
     global modem
     global imei  #
     #imei = modem.getImei()
+    
+    global log
+    global spase
     
     def __init__(self, command:str):
         self.command = command
@@ -32,6 +43,7 @@ class Commands:
         
     def send_msg_to_the_server(self, message):
         print("class Commands:   method send_msg_to_the_server(): ")
+        log.append("".join([ spase, "send_msg_serv() |", spase, spase]))
         name = "BeniTest"
         pas = "87654321"
         #eng = modem.getEngLite()
@@ -200,7 +212,8 @@ class User(Commands):
 
 
     def return_result(self):
-        print("class User / METHOD return_result()")
+        print("class User / METHOD return_resul()")
+        log.append("".join([ spase, "User/return_res()|", spase, spase]))
         return modem.sendHiGPS("/input.php?IMEI=865456054799968&MSG=User=TRTRTRTR;Pass=M2IP1385;&")
     
     def main(self):
@@ -233,6 +246,7 @@ class Phones(Commands):
         
     #@staticmethod
     def return_result(self):
+        log.append("".join([ spase, "Phones/retur_r()|", spase, spase]))
         my_command = self
         my_command = my_command.replace("#","")
         my_command = my_command.replace("$","")                                
@@ -315,6 +329,7 @@ class Mode(Commands):
 
     def return_result(self):
         print("class Mode / METHOD return_result()")
+        log.append("".join([ spase, "Mode/return_re()|", spase, spase]))
         #modem.sendHiGPS("/input.php?IMEI=865456054799968&MSG=SLEEP-1;WORK-3;CYCLE-0;TRANS-7;OHR-1;INPUT-OPEN;&")
         my_command = self
         c = my_command.replace("*MODE-","")
@@ -356,6 +371,7 @@ class ModeQ(Commands):
 
     def return_result(self):
         print(f"ModeQ +")
+        log.append("".join([ spase, "ModeQ/return_r()|", spase, spase]))
         
 class Loc(Commands):
     # Output Type: gprs Text:  0.0714 *LOC$
@@ -370,6 +386,7 @@ class Loc(Commands):
 
     def return_result(self):
         print("class Loc  METHOD return result()")
+        log.append("".join([ spase, "Loc/return_res()|", spase, spase]))
 
         name = "BeniTest"
         pas = "87654321"
@@ -411,6 +428,7 @@ class Gprs(Commands):
 
     def return_result(self):
         print("class Gprs:   method return_result(): ")
+        log.append("".join([ spase, "Gprs/return_re()|", spase, spase]))
         # send GPS to the server
         gps = ''
         loc_info = ''
@@ -488,6 +506,8 @@ class Eng(Commands):
         modem.cipClose()
 
     def return_result(self):
+        
+        log.append("".join([ spase, "Eng/return_res()|", spase, spase]))
         name = "BeniTest"
         pas = "87654321"
         #eng = modem.getEngLite()
@@ -571,6 +591,7 @@ class Set(Commands):
         return "class name : ",self.CLASS_NAME, "command : ", self.command
 
     def return_result(self):
+        log.append("".join([ spase, "Set/return_res()|", spase, spase]))
         print("class Set : METHOD return result()")
     
     
@@ -593,6 +614,7 @@ class Get(Commands):
 
     def get_dataBat(self):
         print("class Get:   method get_dataBat(): ")
+        log.append("".join([ spase, "Get/g_dataBat()|", spase, spase]))
         # description = "F5100001"865456054799968BAT-0,35,3681GSM:"06A4","2C12"&GPS=$GNRMC,114315.000,A,4240.4835,N,02317.3902,E,1.26,200.42,070222,,,A*70&ACUM=&
         # message = IMEI=865456054799968&User=F5100001&Pass=DOGPE2V3&Description=+description
         name = "BeniTest"
@@ -619,6 +641,7 @@ class Get(Commands):
     
     def return_result(self): # returns command type
         print("class Get:   method return_result(): ")
+        log.append("".join([ spase, "Get/return_res()|", spase, spase]))
         my_command = str(self)
         print("command_ = ", my_command ,"  type = ", type(my_command))
         c = my_command.replace("*GET,","")
