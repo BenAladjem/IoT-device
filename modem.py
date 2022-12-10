@@ -50,7 +50,8 @@ class Sim7070(object):
             method = method +"|"
         em_row = [spase]*num_col_in_log
         em_row[this_column] = method
-        log.append("".join(em_row))
+        #log.append("".join(em_row))
+        log.append(em_row)
 
 
     def remov(self, text):
