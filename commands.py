@@ -14,7 +14,7 @@ modem = Sim7070()
 global imei
 #imei - modem.getImei()
 this_column = 1
-num_col_in_log = 4
+num_col_in_log = config.num_col
 
 
 class Commands:
@@ -36,10 +36,10 @@ class Commands:
     
     
     def log_fill(self, method):
-        if len(method) > 16:
-            method = method[:16] + "|"
-        elif len(method) < 16:
-            method = method + " "*(16-len(method)) + "|"
+        if len(method) > 18:
+            method = method[:18] + "|"
+        elif len(method) < 18:
+            method = method + " "*(18-len(method)) + "|"
         else:
             method = method +"|"
         em_row = [spase]*num_col_in_log
