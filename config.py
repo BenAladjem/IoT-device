@@ -17,14 +17,36 @@ Preed = 2
 
 
 log = []
-spase = "                |"
-log_empty_row  = "".join([spase]*4)
-em_row = [spase]*4
-log_1_row = "".join(["Main            |", "Command         |", "Modem           |", "DataBase        |"])
-log.append(log_1_row)
-log.append(log_empty_row)
+spase =    "                |"
+line =     "-----------------"
+arrow_r  = "-->             |"
+arrow_l  = "   <-------------"
+line_r  =  "   --------------"
+line_l  =  "---             |"
+#log_spasepty_row  = "".join([spase]*4)
+em_row  = [spase]*4
+#log_1_row = "".join(["Main            |", "Command         |", "Modem           |", "DataBase        |"])
+log_classes_name_row = ["Main            |", "Command         |", "Modem           |", "DataBase        |"]
+log.append(log_classes_name_row)
+log.append(em_row)
 
-empty_question = "/input.php?IMEI=865456054799968"
+
+arrows={
+"arrow01" : [line_r,arrow_r,spase,spase ],
+"arrow02" : [line_r,line,arrow_r, spase],
+"arrow03" : [line_r, line, line, arrow_r],
+"arrow12" : [spase, line_r, arrow_r, spase],
+"arrow13" : [spase, line_r, line, arrow_r],
+"arrow23" : [spase,spase,line_r, arrow_r],
+"arrow10" : [arrow_l, line_l, spase, spase],
+"arrow20" : [arrow_l, line, line_l, spase],
+"arrow30" : [arrow_l, line, line, line_l],
+"arrow21" : [spase, arrow_l, line_l, spase],
+"arrow31" : [spase, arrow_l, line, line_l],
+"arrow32" : [spase, spase, arrow_l, line_l]
+}
+
+spasepty_question = "/input.php?IMEI=865456054799968"
 
 #def recogn_name(command):  in Commands
 d = {
