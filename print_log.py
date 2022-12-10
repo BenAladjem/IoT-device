@@ -1,7 +1,8 @@
+num_col = 5
 em =    "                |"
-em_row = [em]*6
+em_row = [em]*len_row
 a = "aaaaaaa         |"
-names = [a]*6
+names = [a]*len_row
 
 line =     "-----------------"
 arrow_r  = "-->             |"
@@ -60,7 +61,7 @@ log.append(row2)
 log.append(row2)
 log.append(row3)
 log.append(row1)
-                     
+'''                    
 def prt_log( log):
     for r in range(len(log)-1):
         row = log[r]
@@ -79,14 +80,14 @@ def prt_log( log):
             print("".join(arrows[sr]))
     print("".join(log[-1]))
         
-        
+'''        
         
 def arrow_row(a, b):
-    if any([a<0, b<0, a>6, b>6]):
+    if any([a<0, b<0, a>num_col, b>num_col]):
         return False
     row = []
     if a<b:
-        for i in range(6):
+        for i in range(num_col):
             if i<a or i>b:
                 row.append(em)
             elif i>a and i < b:
@@ -96,7 +97,7 @@ def arrow_row(a, b):
             elif i == b:
                 row.append(arrow_r)
     elif a>b:
-        for i in range(6):
+        for i in range(num_col):
             if i>a or i<b:
                 row.append(em)
             elif i<a and i > b:
@@ -115,10 +116,10 @@ def pr_log( log):
         print("".join(row))
         p1 = 0
         p2 = 0
-        for i in range(len(row)):
+        for i in range(num_col):
             if row[i] != em:
                 p1 = i
-        for j in range( len(row2)):
+        for j in range( num_col):
             if row2[j] != em:
                 p2 = j
         if p1 != p2 and r > 1:
@@ -126,14 +127,14 @@ def pr_log( log):
 
     print("".join(log[-1]))
     
-
+'''
 a = 0
 b = 2
 
 arrow_row(a, b)
 for i in range(6):
     arrow_row(i, 0)
-    
+ '''   
 print()
 pr_log(log)
 
