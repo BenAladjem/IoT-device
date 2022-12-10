@@ -1,17 +1,19 @@
 em =    "                |"
-em_row = [em]*4
+em_row = [em]*6
 a = "aaaaaaa         |"
-names = [a]*4
+names = [a]*6
 
 line =     "-----------------"
 arrow_r  = "-->             |"
-arrow_l  = "  <--------------"
-line_r  =  "  ---------------"
+arrow_l  = "   <-------------"
+line_r  =  "   --------------"
 line_l  =  "---             |"
-row1 = [a, em, em, em]
-row2 = [em, a, em, em]
-row3 = [em, em, a, em]
-row4 = [em, em, em, a]
+row1 = [a, em, em, em, em, em]
+row2 = [em, a, em, em, em, em]
+row3 = [em, em, a, em, em, em]
+row4 = [em, em, em, a, em, em]
+row5 = [em, em, em, em, a, em]
+row6 = [em, em, em, em, em, a]
 
 arrows={
 "arrow01" : [line_r,arrow_r,em,em ],
@@ -35,20 +37,20 @@ log.append(row3)
 log.append(row3)
 log.append(row1)
 log.append(row1)
-log.append(row4)
+log.append(row6)
 log.append(row2)
 log.append(row2)
 log.append(row3)
 log.append(row1)
 log.append(row1)
-log.append(row4)
+log.append(row5)
 log.append(row3)
 log.append(row4)
 log.append(row2)
 log.append(row4)
 log.append(row2)
 log.append(row2)
-log.append(row3)
+log.append(row6)
 log.append(row3)
 log.append(row3)
 log.append(row1)
@@ -77,6 +79,65 @@ def prt_log( log):
             print("".join(arrows[sr]))
     print("".join(log[-1]))
         
+        
+        
+def arrow_row(a, b):
+    if any([a<0, b<0, a>6, b>6]):
+        return False
+    row = []
+    if a<b:
+        for i in range(6):
+            if i<a or i>b:
+                row.append(em)
+            elif i>a and i < b:
+                row.append(line)
+            elif i == a:
+                row.append(line_r)
+            elif i == b:
+                row.append(arrow_r)
+    elif a>b:
+        for i in range(6):
+            if i>a or i<b:
+                row.append(em)
+            elif i<a and i > b:
+                row.append(line)
+            elif i == a:
+                row.append(line_l)
+            elif i == b:
+                row.append(arrow_l)
+                            
+    print("".join(row))
+    
+def pr_log( log):
+    for r in range(len(log)-1):
+        row = log[r]
+        row2 = log[r+1]
+        print("".join(row))
+        p1 = 0
+        p2 = 0
+        for i in range(len(row)):
+            if row[i] != em:
+                p1 = i
+        for j in range( len(row2)):
+            if row2[j] != em:
+                p2 = j
+        if p1 != p2 and r > 1:
+            arrow_row(p1, p2)
+
+    print("".join(log[-1]))
+    
+
+a = 0
+b = 2
+
+arrow_row(a, b)
+for i in range(6):
+    arrow_row(i, 0)
+    
+print()
+pr_log(log)
+
+
     
     
-prt_log(log)   
+#prt_log(log)   
