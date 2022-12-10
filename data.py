@@ -7,6 +7,8 @@ global spase
 spase = config.spase
 global em_row
 em_row = config.em_row
+num_col_in_log = 4
+this_column = 3
 
 class Database(object):
     global log
@@ -84,11 +86,24 @@ class Database(object):
         db.flush()
         db.close()
         f.close()
+        
+    def log_fill(self,method):
+        if len(method) > 16:
+            method = method[:16] + "|"
+        elif len(method) < 16:
+            method = method + " "*(16-len(method)) + "|"
+        else:
+            method = method +"|"
+        em_row = [spase]*num_col_in_log
+        em_row[this_column] = method
+        #log.append("".join(em_row))
+        log.append(em_row)    
 
     def getParameterData(self, uri):  # this is copy
         print("class Database / METHOD getParameterData()")
-        em_row[3] = "getParamData()  |"
-        log.append("".join(em_row))
+        self.log_fill("getParamData()")
+        #em_row[3] = "getParamData()  |"
+        #log.append("".join(em_row))
 
         try:
             return self.params[uri]
@@ -98,8 +113,9 @@ class Database(object):
     # връща лист от параметрите за ключ     
     def getParameterByHiGPS(self, higpsId):
         print("class Database / METHOD getParameterByHiGPS()")
-        em_row[3] = "getParamHiGPS() |"
-        log.append("".join(em_row))
+        self.log_fill("getParamHiGPS()")
+        #em_row[3] = "getParamHiGPS() |"
+        #log.append("".join(em_row))
 
         print("in get parameter by HiGPS")
         print(higpsId)
@@ -110,8 +126,9 @@ class Database(object):
         
     def initDefaults(self, imei):
         print("class Database / METHOD initDefailts")
-        em_row[3] = "initDefaults()|"
-        log.append("".join(em_row))
+        self.log_fill("initDefaults()")
+        #em_row[3] = "initDefaults()|"
+        #log.append("".join(em_row))
 
         import os
         import utime
@@ -141,8 +158,9 @@ class Database(object):
                     
     def write_value(self, pos, value):
         print("class Database / METHOD write_value()")
-        em_row[3] = "write_value()   |"
-        log.append("".join(em_row))
+        self.log_fill("write_value()")
+        #em_row[3] = "write_value()   |"
+        #log.append("".join(em_row))
 
         self.write(pos, value)
         
@@ -150,8 +168,9 @@ class Database(object):
 
     def read(self, property, echo=True):  # copy
         print("class Database / METHOD read()")
-        em_row[3] = "read()          |"
-        log.append("".join(em_row))
+        self.log_fill("read()")
+        #em_row[3] = "read()          |"
+        #log.append("".join(em_row))
 
         import btree
         try:
@@ -165,8 +184,9 @@ class Database(object):
 
     def write(self, property, value):  # copy
         print("class Database / METHOD write()")
-        em_row[3] = "write()         |"
-        log.append("".join(em_row))
+        self.log_fill("write()")
+        #em_row[3] = "write()         |"
+        #log.append("".join(em_row))
         
         self.newdata = True
         try:
@@ -187,8 +207,9 @@ class Database(object):
 
     def store(self):  # copy   Dava Exception
         print("class Database / METHOD store()")
-        em_row[3] = "store()         |"
-        log.append("".join(em_row))
+        self.log_fill("store()")
+        #em_row[3] = "store()         |"
+        #log.append("".join(em_row))
         
         if self.newdata == False:
             print("No data to write")
@@ -225,8 +246,9 @@ class Database(object):
         
     def get_report(self):
         print("class Database / METHOD get_report()")
-        em_row[3] = "get_report()    |"
-        log.append("".join(em_row))
+        self.log_fill("get_report()")
+        #em_row[3] = "get_report()    |"
+        #log.append("".join(em_row))
         
 
         inst = Database() # инстанцията за доклада да се изкара в main метода,
