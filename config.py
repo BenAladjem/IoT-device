@@ -17,17 +17,20 @@ Preed = 2
 
 
 log = []
-spase =    "                |"
-line =     "-----------------"
-arrow_r  = "-->             |"
-arrow_l  = "   <-------------"
-line_r  =  "   --------------"
-line_l  =  "---             |"
-#log_spasepty_row  = "".join([spase]*4)
-em_row  = [spase]*4
-#log_1_row = "".join(["Main            |", "Command         |", "Modem           |", "DataBase        |"])
-log_classes_name_row = ["Main            |", "Command         |", "Modem           |", "DataBase        |"]
+
+spase =    "                  |"
+line =     "-------------------"
+arrow_r  = "-->               |"
+arrow_l  = "    <--------------"
+line_r  =  "    ---------------"
+line_l  =  "---               |"
+log_classes_name_row = ["  Main            |", "  Command         |", "  Modem           |", "  DataBase        |", "  FindyIoT        |", "      W C         |"]
+num_col = len(log_classes_name_row)
+em_row  = [spase]*num_col
+#pas_row = line*
 log.append(log_classes_name_row)
+log.append([line]*num_col)
+
 log.append(em_row)
 
 
