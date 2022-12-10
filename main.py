@@ -25,11 +25,43 @@ log = config.log
 def print_log(log):
     for row in log:
         print(row)
+        
+def prt_log( log):
+    for r in range(len(log)-1):
+        row = log[r]
+        row2 = log[r+1]
+        print("".join(row))
+        p1 = 0
+        p2 = 0
+        for i in range(len(row)):
+            if row[i] != spase:
+                p1 = i
+                #print(row[i])
+                #print(spase)
+        for j in range( len(row2)):
+            if row2[j] != spase:
+                p2 = j
+        if p1 != p2 and r > 1:
+            sr = "arrow"+str(p1)+str(p2)
+            # check the sr
+            #print(sr)
+            print("".join(config.arrows[sr]))
+    print("".join(log[-1]))
+        
+def log_fill(method):
+    if len(method) > 16:
+        method = method[:16] + "|"
+    elif len(method) < 16:
+        method = method + " "*(16-len(method)) + "|"
+    else:
+        method = method +"|"
+    em_row = [spase]*num_col_in_log
+    em_row[this_column] = method
+    #log.append("".join(em_row))
+    log.append(em_row)        
 
 def beep():
-    em_row = [spase]*num_col_in_log
-    em_row[this_column] = "beep               |"
-    log.append("".join(em_row))
+    log_fill("beep()")
     
     pwm0 = machine.PWM(machine.Pin(27))
     pwm0.duty(50)
@@ -38,9 +70,10 @@ def beep():
     pwm0.duty(0)
     
 def write_batt_in_db(batt):
-    em_row = [spase]*num_col_in_log
-    em_row[this_column] = "write_batt_in_db() |"
-    log.append("".join(em_row))
+    log_fill("write_batt_in_db()")
+    #em_row = [spase]*num_col_in_log
+    #em_row[this_column] = "write_batt_in_db() |"
+    #log.append("".join(em_row))
     
     d.write("223", batt)
     d.store()
@@ -49,27 +82,30 @@ def write_batt_in_db(batt):
 
     
 def write_gps(gps):
-    em_row = [spase]*num_col_in_log
-    em_row[this_column] = "write_gps()        |"
-    log.append("".join(em_row))
+    log_fill("write_gps()")
+    #em_row = [spase]*num_col_in_log
+    #em_row[this_column] = "write_gps()        |"
+    #log.append("".join(em_row))
     for key in gps:
         d.write(key, gps[key])
         d.store()
         d.store()
         
 def write_report_type(r_type):
-    em_row = [spase]*num_col_in_log
-    em_row[this_column] = "write_rep_type()|"
-    log.append("".join(em_row))
+    log_fill("write_rep_type()")
+    #em_row = [spase]*num_col_in_log
+    #em_row[this_column] = "write_rep_type()|"
+    #log.append("".join(em_row))
     d.write("565", r_type)
     d.store()
 
 
 def recogn_name(command):
     print("METHOD recogn_name()")
-    em_row = [spase]*num_col_in_log
-    em_row[this_column] = "recogn_name     |"
-    log.append("".join(em_row))
+    log_fill("recogn_name()")
+    #em_row = [spase]*num_col_in_log
+    #em_row[this_column] = "recogn_name     |"
+    #log.append("".join(em_row))
     
     '''
     d = {"#User=":"User",
@@ -96,9 +132,10 @@ def recogn_name(command):
 
 def reading_command(): #изпраща команда обръщение към сървъра, за да прочете чакаща команда, ако има
     print("METHOD reading_command()")
-    em_row = [spase]*num_col_in_log
-    em_row[this_column] = "reading_command |"
-    log.append("".join(em_row))
+    log_fill("reading_command()")
+    #em_row = [spase]*num_col_in_log
+    #em_row[this_column] = "reading_command |"
+    #log.append("".join(em_row))
 
     modem.cipClose()
     modem.connectHiGPS()    
@@ -114,9 +151,10 @@ def reading_command(): #изпраща команда обръщение към 
 
 def command_action(command): # is calling method return_result
     print("METHOD command_action()")
-    em_row = [spase]*num_col_in_log
-    em_row[this_column] = "command_action  |"
-    log.append("".join(em_row))
+    log_fill("command_actionn()")
+    #em_row = [spase]*num_col_in_log
+    #em_row[this_column] = "command_action  |"
+    #log.append("".join(em_row))
     
     r = recogn_name(command)
     print("Class name == ",r)
@@ -127,18 +165,20 @@ def command_action(command): # is calling method return_result
 
 def class_instan_method(command): # връща инстанция към класа, за който се отнася командата
     print("METHOD class_instan()")
-    em_row = [spase]*num_col_in_log
-    em_row[this_column] = "class_inst_met  |"
-    log.append("".join(em_row))
+    log_fill("class_inst_meth()")
+    #em_row = [spase]*num_col_in_log
+    #em_row[this_column] = "class_inst_met  |"
+    #log.append("".join(em_row))
     
     class_name = recogn_name(command)
     return eval(class_name+"('"+command+"')")
 
 
 def class_instance_action(command):# за тест генерира съобщение с нужните данни и ги изпраща към сървъра 
-    em_row = [spase]*num_col_in_log
-    em_row[this_column] = "class_instance_act   |"
-    log.append("".join(em_row))
+    log_fill("class_instance_act")
+    #em_row = [spase]*num_col_in_log
+    #em_row[this_column] = "class_instance_act   |"
+    #log.append("".join(em_row))
     
     com = class_instance.return_result()
     if com == "223":
@@ -149,9 +189,10 @@ def command_cicle(): # чете и изпълнява чакащите кома�
     
     global class_instance
     print("METHOD command_cicle()")
-    em_row = [spase]*num_col_in_log
-    em_row[this_column] = "command_cicle   |"
-    log.append("".join(em_row))
+    log_fill("command_circle")
+    #em_row = [spase]*num_col_in_log
+    #em_row[this_column] = "command_cicle   |"
+   # log.append("".join(em_row))
     #em_row = [spase]*4
     c = ""
     while not c == "OK":
