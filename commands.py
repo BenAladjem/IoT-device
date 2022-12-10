@@ -1,6 +1,7 @@
 from modem import *
 #import modem
 from config import *
+
 import utime
 
 global log
@@ -8,9 +9,13 @@ log = config.log
 global spase
 spase = config.spase
 global em_row
-
+global modem
+modem = Sim7070()
+global imei
+#imei - modem.getImei()
 this_column = 1
 num_col_in_log = 4
+
 
 class Commands:
     CLASS_NAME = "Commands"
@@ -21,7 +26,7 @@ class Commands:
     global log
     global spase
     global em_row
-    
+
     def __init__(self, command):
         self.command = command
         #self.m = Sim7070()
@@ -39,7 +44,8 @@ class Commands:
             method = method +"|"
         em_row = [spase]*num_col_in_log
         em_row[this_column] = method
-        log.append("".join(em_row))
+        log.append(em_row)
+        #log.append("".join(em_row))
         
 
     def recognition_other(self):
@@ -461,22 +467,22 @@ class Gprs(Commands):
 
 
     def return_result(self):
-        self.log_fill("Gprs/ret_res()  |")
-        
         print("class Gprs:   method return_result(): ")
+        #self.log_fill("Gprs/ret_res()")
+
         # send GPS to the server
         gps = ''
         loc_info = ''
-        eng = self.modem.parseEng()
+        eng = modem.parseEng()
         print("eng = ", eng)
-        gps = self.modem.gps()
+        gps = modem.gps()
         #imei = modem.getImei()
         #imei = self.imei
-        batt = self.modem.getBat()#[1]
+        batt = modem.getBat()#[1]
         print()  
         print("gps = ",gps)
         if gps != False:
-            loc_info = self.modem.return_base64(gps)
+            loc_info = modem.return_base64(gps)
         #message = "/input.php?IMEI="+imei+"&bat="+batt+"&GPSArray="+loc_info+"=&"
             message = "/input.php?IMEI="+imei+"&bat="+batt[1]+"&GPSArray="+loc_info+"=&"
             modem.turnOffGPS()
@@ -542,20 +548,23 @@ class Eng(Commands):
         modem.cipClose()
 
     def return_result(self):
-        self.log_fill("Eng/ret_res()")
+        print("class Eng/ METHOD return_result()")
+        #self.log_fill("Eng/ret_res()")
 
         name = "BeniTest"
         pas = "87654321"
         #eng = modem.getEngLite()
-        eng = self.modem.parseEng()
+        eng = modem.parseEng()
         #imei = modem.getImei()
-        batt = self.modem.getBat()#[1]
+        batt = modem.getBat()#[1]
         batt = ",".join(batt) # returns str
         #cell_info = modem.parseCpsi()
         description = name+imei+"BAT-"+batt+"GSM:0000,FFFF"+eng
     #description = name+imei+"BAT-"+batt+"GSM:0000,FFFF"+"1,LTECAT-M10,1550,339,-84,-62,-11,5,102,303617,284,05,255"
         message = "/input.php?IMEI="+imei+"&User="+name+"&Pass="+pas+"&Description="+description       
-    
+        
+        self.send_msg_to_the_server(message)
+        '''
         modem.turnOffGPS()
         modem.cipClose()
         modem.connectHiGPS()
@@ -567,7 +576,7 @@ class Eng(Commands):
         modem.cipClose()
     
 
-
+        '''
 class Wifi(Commands):
     CLASS_NAME = "WiFi" 
     # Input Type: eng Text: IMEI=865456054799968&User=BeniTest&Pass=014_23_l&Description=BeniTest865456054799968BAT-0,33,3430GSM:0000,FFFF284,05,066f,2e55,53,066f,2f64,38,066f&wifij=[[-50,d8:50:e6:95:b9:d0,3],[-60,08:55:31:e7:02:82,1],[-61,0a:55:31:e7:02:82,1]]&data=307,1;216,1;264,0;290,0;&er=&
