@@ -7,7 +7,7 @@ global spase
 spase = config.spase
 global em_row
 em_row = config.em_row
-num_col_in_log = 4
+num_col_in_log = config.num_col
 this_column = 3
 
 class Database(object):
@@ -88,10 +88,10 @@ class Database(object):
         f.close()
         
     def log_fill(self,method):
-        if len(method) > 16:
-            method = method[:16] + "|"
-        elif len(method) < 16:
-            method = method + " "*(16-len(method)) + "|"
+        if len(method) > 18:
+            method = method[:18] + "|"
+        elif len(method) < 18:
+            method = method + " "*(18-len(method)) + "|"
         else:
             method = method +"|"
         em_row = [spase]*num_col_in_log
