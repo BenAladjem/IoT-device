@@ -1,5 +1,4 @@
 from modem import *
-#import modem
 from config import *
 
 import utime
@@ -29,7 +28,6 @@ class Commands:
 
     def __init__(self, command):
         self.command = command
-        #self.m = Sim7070()
         
     def __repr__(self):
         return "class name : ",self.CLASS_NAME, "command : ", self.command
@@ -45,7 +43,6 @@ class Commands:
         em_row = [spase]*num_col_in_log
         em_row[this_column] = method
         log.append(em_row)
-        #log.append("".join(em_row))
         
 
     def recognition_other(self):
@@ -203,7 +200,7 @@ class User(Commands):
         return "class name : ",self.CLASS_NAME, "command : ", self.command        
        
     def take_name(self):
-        self.log_fill("User/take_name()|")
+        self.log_fill("User/take_name()")
         
         print("class User / METHOD take_name()")
         my_command = self.command
@@ -214,7 +211,7 @@ class User(Commands):
     
     def take_pass(self):
         print("class User / METHOD take_pass()")
-        self.log_fill("User/take_pass()|")
+        self.log_fill("User/take_pass()")
         
         my_command = self.command
         my_command = my_command.split(":")
@@ -224,7 +221,7 @@ class User(Commands):
     
     def message(self):
         print("class User / METHOD message()")
-        self.log_fill("User/message()  |")
+        self.log_fill("User/message()")
 
         
         my_command = self.command
@@ -242,7 +239,7 @@ class User(Commands):
 
     def return_result(self):
         print("class User / METHOD return_resul()")
-        self.log_fill("User/ret_res()  |")
+        self.log_fill("User/ret_res()")
 
         return modem.sendHiGPS("/input.php?IMEI=865456054799968&MSG=User=TRTRTRTR;Pass=M2IP1385;&")
     
@@ -253,7 +250,7 @@ class User(Commands):
     
     def set_user(self,response):
         print("Set User")
-        self.log_fill("User/set_user() |")
+        self.log_fill("User/set_user()")
         
         print(response)
         #User=12312341:Pass=12345678$AT
@@ -279,7 +276,7 @@ class Phones(Commands):
         
     #@staticmethod
     def return_result(self):
-        self.log_fill("Phones/ret_res()|")
+        self.log_fill("Phones/ret_res()")
 
         my_command = self
         my_command = my_command.replace("#","")
@@ -293,7 +290,7 @@ class Phones(Commands):
 
     def set_phones(self,response):
         print("Set phones")
-        self.log_fill("Phones/set_ph() |")
+        self.log_fill("Phones/set_ph()")
 
         #+359888555197+359889916947+359882107103$AT\r'
         splitted = response.split("+")
@@ -367,7 +364,7 @@ class Mode(Commands):
 
     def return_result(self):
         print("class Mode / METHOD return_result()")
-        self.log_fill("Mode/ret_res()  |")
+        self.log_fill("Mode/ret_res()")
 
         #modem.sendHiGPS("/input.php?IMEI=865456054799968&MSG=SLEEP-1;WORK-3;CYCLE-0;TRANS-7;OHR-1;INPUT-OPEN;&")
         my_command = self
@@ -410,7 +407,7 @@ class ModeQ(Commands):
 
     def return_result(self):
         print(f"ModeQ +")
-        self.log_fill("ModeQ+/ret_res() |")
+        self.log_fill("ModeQ+/ret_res()")
 
         
 class Loc(Commands):
@@ -426,7 +423,7 @@ class Loc(Commands):
 
     def return_result(self):
         print("class Loc  METHOD return result()")
-        self.log_fill("Loc/ret_res()   |")
+        self.log_fill("Loc/ret_res()")
 
         name = "BeniTest"
         pas = "87654321"
@@ -588,7 +585,7 @@ class Wifi(Commands):
         return "class name : ",self.CLASS_NAME, "command : ", self.command
 
     def return_result(self):
-        self.log_fill("WiFi/ret_res()  |")
+        self.log_fill("WiFi/ret_res()")
         
     
 class Start(Commands):
@@ -601,7 +598,7 @@ class Start(Commands):
         return "class name : ",self.CLASS_NAME, "command : ", self.command
 
     def return_result(self):
-        self.log_fill("Start/ret_res() |")
+        self.log_fill("Start/ret_res()")
         
     
 class Stop1(Commands):
@@ -616,7 +613,7 @@ class Stop1(Commands):
         return "class name : ",self.CLASS_NAME, "command : ", self.command        
 
     def return_result(self):
-        self.log_fill("Stop1/ret_res() |")
+        self.log_fill("Stop1/ret_res()")
         
 
 class Stop3(Commands):
@@ -626,7 +623,7 @@ class Stop3(Commands):
         super().__init__(command)
 
     def return_result(self):
-        self.log_fill("Stop3/ret_res() |")
+        self.log_fill("Stop3/ret_res()")
         
     
 class Set(Commands):
@@ -639,7 +636,7 @@ class Set(Commands):
         return "class name : ",self.CLASS_NAME, "command : ", self.command
 
     def return_result(self):
-        self.log_fill("Set/return_res()|")
+        self.log_fill("Set/return_res()")
         
         #log.append("".join([ spase, "Set/return_res()|", spase, spase]))
         print("class Set : METHOD return result()")
@@ -655,20 +652,20 @@ class Get(Commands):
 
     def get_samplings(self):
         print("class Get:   method get_sampling(): ")
-        self.log_fill("Get/get_sampl() |")
+        self.log_fill("Get/get_sampl()")
         
         #кой параметри по ID искаме да предаваме
     
 
     def get_samplingsAlarm(self):
         print("class Get:   method get_samplingAlarm(): ")
-        self.log_fill("Get/get_sampAl()|")
+        self.log_fill("Get/get_sampAl()")
 
         return self.get_samplings() + "440,1;"
 
     def get_dataBat(self):
         print("class Get:   method get_dataBat(): ")
-        self.log_fill("Get/g_dataBat()|")
+        self.log_fill("Get/g_dataBat()")
         
         # description = "F5100001"865456054799968BAT-0,35,3681GSM:"06A4","2C12"&GPS=$GNRMC,114315.000,A,4240.4835,N,02317.3902,E,1.26,200.42,070222,,,A*70&ACUM=&
         # message = IMEI=865456054799968&User=F5100001&Pass=DOGPE2V3&Description=+description
@@ -684,17 +681,17 @@ class Get(Commands):
 
     def get_data(self):
         print("class Get:   method get_data(): ")
-        self.log_fill("Get/get_data()|")
+        self.log_fill("Get/get_data()")
         
 
     def get_setting(self, id):
         print("class Get:   method get_setting(): ")
-        self.log_fill("Get/get_settin()|")
+        self.log_fill("Get/get_settin()")
         
 
     def get_command(self, id):
         print("class Get:   method get_command(): ")
-        self.log_fill("Get/get_command()|")
+        self.log_fill("Get/get_command()")
         
     
     def return_result(self): # returns command type
