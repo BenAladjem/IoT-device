@@ -1,5 +1,6 @@
-from modem import *
-from config import*
+#from modem import *
+#from config import*
+import config
 
 global log
 log = config.log
@@ -11,7 +12,7 @@ num_col_in_log = config.num_col
 this_column = 3
 
 class Database(object):
-    CLASS_NAME = Database
+    CLASS_NAME = "Database"
     global log
     global spase
     global em_row
