@@ -11,7 +11,7 @@ global em_row
 global modem
 modem = Sim7070()
 global imei
-#imei - modem.getImei()
+imei = modem.getImei()
 this_column = 1
 num_col_in_log = config.num_col
 
@@ -28,6 +28,7 @@ class Commands:
 
     def __init__(self, command):
         self.command = command
+        self.imei = imei
         
     def __repr__(self):
         return "class name : ",self.CLASS_NAME, "command : ", self.command
@@ -44,6 +45,18 @@ class Commands:
         em_row[this_column] = method
         log.append(em_row)
         
+    def log_gc(method):
+        method = str(method)
+        if len(method) > 18:
+            method = method[:18] + "|"
+        elif len(method) < 18:
+                method = method + " "*(18-len(method)) + "|"
+        else:
+            method = method +"|"
+        em_row = [spase]*num_col_in_log
+        em_row[5] = method
+        log.append(em_row)
+        
 
     def recognition_other(self):
         other = ''
@@ -55,7 +68,7 @@ class Commands:
         
     def send_msg_to_the_server(self, message):
         print("class Commands:   method send_msg_to_the_server(): ")
-        self.log_fill("send_msg_serv() |")
+        self.log_fill("send_msg_serv()")
 
         name = "BeniTest"
         pas = "87654321"
@@ -77,7 +90,7 @@ class Commands:
         modem.cipClose()
         
     def send_GPS_to_the_server():
-        self.l("send_msg_serv() |")
+        self.l("send_msg_serv()")
         
         gps = ''
         loc_info = ''
@@ -128,7 +141,7 @@ class Commands:
     #  'LTE;CAT-M1,Online,284-05,0gps0066,303617,339,EUTRAN-BAND3,1550,5,5,-10,-67,-44,15OK'
 
     def send_cpsi_to_the_server():
-        self.l("send_cpsi_serv()|")
+        self.l("send_cpsi_serv()")
         
         name = "BeniTest"
         pas = "87654321"
@@ -158,7 +171,7 @@ class Commands:
         modem.cipClose()
         
     def send_eng_to_the_server():
-        self.l("send_eng_serv() |")
+        self.l("send_eng_serv()")
         
         name = "BeniTest"
         pas = "87654321"
@@ -550,7 +563,7 @@ class Eng(Commands):
 
         name = "BeniTest"
         pas = "87654321"
-        #eng = modem.getEngLite()
+
         eng = modem.parseEng()
         #imei = modem.getImei()
         batt = modem.getBat()#[1]
