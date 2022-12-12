@@ -3,14 +3,21 @@ import config
 import utime
 import gc
 
+from modem import Sim7070
 from commands import*
 
 from data import Database
-from modem import Sim7070
+
 #from findyIoT import FindyIoT
 
 
 modem = Sim7070()
+if modem.isOn() == False:
+    print("Turning on modem")
+    modem.turnOn()
+    beep()
+print("Check if modem is registered to network -> ", modem.isReg())
+
 d = Database()
 #f = FindyIoT()
 class_instance = Commands("inst") # only make instance
@@ -233,12 +240,9 @@ def command_cicle(): # чете и изпълнява чакащите кома�
         #class_instance_action(c)
         #class_instance.send_to_the_server(x)
     
-if modem.isOn() == False:
-    print("Turning on modem")
-    modem.turnOn()
-    beep()
 
-print("Check if modem is registered to network -> ", modem.isReg())
+
+
 
 log_gc(gc.mem_free())
 
