@@ -1,5 +1,6 @@
 from modem import *
-from config import *
+#from config import *
+import config
 
 import utime
 
@@ -11,6 +12,7 @@ global em_row
 global modem
 modem = Sim7070()
 global imei
+
 imei = modem.getImei()
 this_column = 1
 num_col_in_log = config.num_col
@@ -284,12 +286,14 @@ class Phones(Commands):
         self.command = command
         #self.other = other
         
-    def __repr__(self):
-        return "class name : ",self.CLASS_NAME, "command : ", self.command
+    #def __repr__(self):
+        #return "class name : ",self.CLASS_NAME, "command : ", self.command
         
     #@staticmethod
     def return_result(self):
-        self.log_fill("Phones/ret_res()")
+        print("class Phones/ METHOD return_result()")
+        Phones.log_fill(self,"Phones/ret_res()")
+
 
         my_command = self
         my_command = my_command.replace("#","")
@@ -478,7 +482,7 @@ class Gprs(Commands):
 
     def return_result(self):
         print("class Gprs:   method return_result(): ")
-        #self.log_fill("Gprs/ret_res()")
+        Gprs.log_fill(self, "Gprs/ret_res()")
 
         # send GPS to the server
         gps = ''
