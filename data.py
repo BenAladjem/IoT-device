@@ -11,6 +11,7 @@ num_col_in_log = config.num_col
 this_column = 3
 
 class Database(object):
+    CLASS_NAME = Database
     global log
     global spase
     global em_row
@@ -86,6 +87,9 @@ class Database(object):
         db.flush()
         db.close()
         f.close()
+        
+    def __repr__(self):
+        return "class name : ",self.CLASS_NAME, "data : ", self.data
         
     def log_fill(self,method):
         if len(method) > 18:
