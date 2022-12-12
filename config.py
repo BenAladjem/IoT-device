@@ -17,37 +17,21 @@ Preed = 2
 
 
 log = []
-
 spase =    "                  |"
 line =     "-------------------"
 arrow_r  = "-->               |"
 arrow_l  = "    <--------------"
 line_r  =  "    ---------------"
 line_l  =  "---               |"
-log_classes_name_row = ["  Main            |", "  Command         |", "  Modem           |", "  DataBase        |", "  FindyIoT        |", "      W C         |"]
-num_col = len(log_classes_name_row)
+class_names = ["  Main            |", "  Command         |", "  Modem           |", "  DataBase        |", "  FindyIoT        |", "      G C         |"]
+num_col = len(class_names)
 em_row  = [spase]*num_col
-#pas_row = line*
-log.append(log_classes_name_row)
+log.append(class_names)
 log.append([line]*num_col)
-
 log.append(em_row)
 
 
-arrows={
-"arrow01" : [line_r,arrow_r,spase,spase ],
-"arrow02" : [line_r,line,arrow_r, spase],
-"arrow03" : [line_r, line, line, arrow_r],
-"arrow12" : [spase, line_r, arrow_r, spase],
-"arrow13" : [spase, line_r, line, arrow_r],
-"arrow23" : [spase,spase,line_r, arrow_r],
-"arrow10" : [arrow_l, line_l, spase, spase],
-"arrow20" : [arrow_l, line, line_l, spase],
-"arrow30" : [arrow_l, line, line, line_l],
-"arrow21" : [spase, arrow_l, line_l, spase],
-"arrow31" : [spase, arrow_l, line, line_l],
-"arrow32" : [spase, spase, arrow_l, line_l]
-}
+
 
 spasepty_question = "/input.php?IMEI=865456054799968"
 
