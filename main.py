@@ -1,19 +1,20 @@
 import machine
 import config
 import utime
+import gc
 
 from commands import*
 
 from data import Database
 from modem import Sim7070
-from findyIoT import FindyIoT
+#from findyIoT import FindyIoT
 
 
 modem = Sim7070()
 d = Database()
-f = FindyIoT()
+#f = FindyIoT()
 class_instance = Commands("inst") # only make instance
-
+gc.enable()
 
 this_column = 0# в коя колона на лога да се записват данните
 global log
@@ -22,10 +23,11 @@ spase = config.spase
 log = config.log
 num_col_in_log = config.num_col
 
+'''
 def pr_log(log):
     for row in log:
         print("".join(row))
-        
+'''        
         
 def log_fill(method):
     if len(method) > 18:
@@ -36,6 +38,18 @@ def log_fill(method):
         method = method +"|"
     em_row = [spase]*num_col_in_log
     em_row[this_column] = method
+    log.append(em_row)
+    
+def log_gc(method):
+    method = str(method)
+    if len(method) > 18:
+        method = method[:18] + "|"
+    elif len(method) < 18:
+        method = method + " "*(18-len(method)) + "|"
+    else:
+        method = method +"|"
+    em_row = [spase]*num_col_in_log
+    em_row[5] = method
     log.append(em_row)
     
 def arrow_row(a, b):
@@ -65,7 +79,7 @@ def arrow_row(a, b):
                             
     print("".join(row))
     
-def print_log( log):
+def print_log():
     for r in range(len(log)-1):
         row = log[r]
         row2 = log[r+1]
@@ -155,7 +169,7 @@ def reading_command(): #изпраща команда обръщение към 
         return com
     else:
         return False
-
+'''
 def command_action(command): # is calling method return_result
     print("METHOD command_action()")
     log_fill("command_actionn()")
@@ -166,6 +180,16 @@ def command_action(command): # is calling method return_result
     print("st = ", st)
 
     return eval(r + st)
+'''
+
+def command_action(command): # is calling method return_result
+    print("METHOD command_action()")
+    log_fill("command_actionn()")
+
+    st = class_instance.CLASS_NAME+".return_result('"+command+"')"  # add command as argument
+    print("class/ret_res = ", st)
+
+    return eval(st)
 
 def class_instan_method(command): # връща инстанция към класа, за който се отнася командата
     print("METHOD class_instan()")
@@ -200,12 +224,12 @@ def command_cicle(): # чете и изпълнява чакащите кома�
         #command_action(c)
                 
         class_instance = class_instan_method(c)  # returns class instance
-        
+        log_gc(gc.mem_free())
         #print(class_instance.command)
         #print("TRANCE = ", class_instance.command)
         
         command_action(c)
-        
+        log_gc(gc.mem_free())
         #class_instance_action(c)
         #class_instance.send_to_the_server(x)
     
@@ -215,6 +239,8 @@ if modem.isOn() == False:
     beep()
 
 print("Check if modem is registered to network -> ", modem.isReg())
+
+log_gc(gc.mem_free())
 
 imei = modem.getImei()
 batt = modem.getBat()[1]
