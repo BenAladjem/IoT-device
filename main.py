@@ -25,8 +25,8 @@ class_instance = Commands("inst") # only make instance
 gc.enable()
 
 this_column = 0# в коя колона на лога да се записват данните
-global log
-global em_row
+#global log
+#global em_row
 #spase = config.spase
 #log = config.log
 #num_col = config.num_col
