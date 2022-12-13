@@ -1,5 +1,6 @@
 import machine
-import config
+#import config
+from config import *
 import utime
 import gc
 
@@ -26,9 +27,9 @@ gc.enable()
 this_column = 0# в коя колона на лога да се записват данните
 global log
 global em_row
-spase = config.spase
-log = config.log
-num_col_in_log = config.num_col
+#spase = config.spase
+#log = config.log
+#num_col = config.num_col
 
 '''
 def pr_log(log):
@@ -43,7 +44,7 @@ def log_fill(method):
         method = method + " "*(18-len(method)) + "|"
     else:
         method = method +"|"
-    em_row = [spase]*num_col_in_log
+    em_row = [spase]*num_col
     em_row[this_column] = method
     log.append(em_row)
     
@@ -55,7 +56,7 @@ def log_gc(method):
         method = method + " "*(18-len(method)) + "|"
     else:
         method = method +"|"
-    em_row = [spase]*num_col_in_log
+    em_row = [spase]*num_col
     em_row[5] = method
     log.append(em_row)
     
