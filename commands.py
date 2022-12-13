@@ -13,7 +13,7 @@ global modem
 modem = Sim7070()
 global imei
 
-imei = modem.getImei()
+#imei = modem.getImei()
 this_column = 1
 num_col_in_log = config.num_col
 
@@ -30,7 +30,7 @@ class Commands:
 
     def __init__(self, command):
         self.command = command
-        self.imei = imei
+        #self.imei = imei
         
     def __repr__(self):
         return "class name : ",self.CLASS_NAME, "command : ", self.command
