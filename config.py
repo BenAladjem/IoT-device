@@ -33,7 +33,7 @@ log.append(em_row)
 
 
 
-spasepty_question = "/input.php?IMEI=865456054799968"
+empty_question = "/input.php?IMEI=865456054799968"
 
 #def recogn_name(command):  in Commands
 d = {

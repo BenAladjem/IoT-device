@@ -1,5 +1,6 @@
 import machine
 import config
+from config import *
 import utime
 #import time
 import ubinascii
@@ -9,11 +10,11 @@ registrationStart = utime.time()
 registrationTime = 0
 
 global log
-log = config.log
+#log = config.log
 global spase
-spase = config.spase
+#spase = config.spase
 global em_row
-num_col_in_log = config.num_col
+#num_col = config.num_col
 this_column = 2   
 def beep():
     pwm0 = machine.PWM(machine.Pin(27))
@@ -48,7 +49,7 @@ class Sim7070(object):
             method = method + " "*(18-len(method)) + "|"
         else:
             method = method +"|"
-        em_row = [spase]*num_col_in_log
+        em_row = [spase]*num_col
         em_row[this_column] = method
         #log.append("".join(em_row))
         log.append(em_row)
@@ -119,6 +120,7 @@ class Sim7070(object):
             #utime.sleep(0.5)
         self.us("AT")
         command = "AT+CBC"
+        print("command = ",command)
         wrong_command = "AT+CBC=?"
         responce = "+CBC: "
         text = "+CBC:"
