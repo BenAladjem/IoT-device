@@ -4,14 +4,14 @@ import config
 
 import utime
 
-global log
+#global log
 log = config.log
-global spase
+#global spase
 spase = config.spase
-global em_row
-global modem
+#global em_row
+#global modem
 modem = Sim7070()
-global imei
+#global imei
 
 imei = modem.getImei()
 this_column = 1
