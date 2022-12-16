@@ -9,11 +9,11 @@ import json
 registrationStart = utime.time()
 registrationTime = 0
 
-global log
+#global log
 #log = config.log
-global spase
+#global spase
 #spase = config.spase
-global em_row
+#global em_row
 #num_col = config.num_col
 this_column = 2   
 def beep():
