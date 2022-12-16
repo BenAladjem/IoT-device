@@ -30,7 +30,7 @@ log.append(class_names)
 log.append([line]*num_col)
 log.append(em_row)
 
-
+#imei = "111111111111111"
 
 
 empty_question = "/input.php?IMEI=865456054799968"
