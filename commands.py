@@ -151,13 +151,13 @@ class Commands:
         pas = "87654321"
         #cpsi = modem.getCPSI()
         #eng = modem.getEng()
-        imei = modem.getImei()
+        #imei = modem.getImei()
         batt = modem.getBat()#[1]
         batt = ",".join(batt) # returns str
         cell_info = modem.parseCpsi()
         #print(type(cpsi),"   cpsi = ",cpsi)
         #print(type(eng), "   eng = ", eng)
-        print(type(imei),"   imei = ",imei)
+        #print(type(imei),"   imei = ",imei)
         print(type(batt), "   batt = ", batt)
         
         #description = name+imei+"BAT-"+batt+"GSM:"+cell_info["tac"]+","+cell_info["cell_id"]+","+cell_info["mcc"]+','+cell_info["mnc"]+','+cell_info["tac"]+','+cell_info["cell_id"]+","+cell_info["rssi"]
@@ -181,7 +181,7 @@ class Commands:
         pas = "87654321"
         #eng = modem.getEngLite()
         eng = modem.parseEng()
-        imei = modem.getImei()
+        #imei = modem.getImei()
         batt = modem.getBat()#[1]
         batt = ",".join(batt) # returns str
         #cell_info = modem.parseCpsi()
@@ -345,7 +345,7 @@ class Mode(Commands):
         super().__init__(command)
         self.command = command
         
-        
+'''        
     def __repr__(self):
         return "class name : ",self.CLASS_NAME, "command : ", self.command
         
@@ -361,7 +361,7 @@ class Mode(Commands):
     def imei_ret(self):  # Not work  !
         return "iiimei = ", imei
         
-    
+'''    
     def take_mode_dict(self): # returns mode command
         print("class Mode / METHOD take_mode_dict()")
         em_row = [spase]*num_col_in_log
