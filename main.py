@@ -13,15 +13,10 @@ from data import Database
 
 
 modem = Sim7070()
-if modem.isOn() == False:
-    print("Turning on modem")
-    modem.turnOn()
-    beep()
-print("Check if modem is registered to network -> ", modem.isReg())
 
 d = Database()
 #f = FindyIoT()
-class_instance = Commands("inst") # only make instance
+#class_instance = Commands("inst") # only make instance
 gc.enable()
 
 this_column = 0# в коя колона на лога да се записват данните
@@ -247,7 +242,15 @@ def command_cicle(): # чете и изпълнява чакащите кома�
 
 log_gc(gc.mem_free())
 
+if modem.isOn() == False:
+    print("Turning on modem")
+    while not modem.isOn():
+        modem.turnOn()
+        beep()
+print("Check if modem is registered to network -> ", modem.isReg())
+
 imei = modem.getImei()
+class_instance = Commands(imei)
 batt = modem.getBat()[1]
 #да проверя дали не е празна базата. Ако няма ИМЕИ, значи е празна
 if not d.read("200"):
