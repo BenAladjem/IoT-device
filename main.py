@@ -6,7 +6,6 @@ import gc
 
 from modem import Sim7070
 from commands import*
-
 from data import Database
 
 #from findyIoT import FindyIoT
@@ -60,7 +59,7 @@ def arrow_row(a, b):
         return False
     row = []
     if a<b:
-        for i in range(num_col):
+        for i in range(num_col_in_log):
             if i<a or i>b:
                 row.append(spase)
             elif i>a and i < b:
@@ -70,7 +69,7 @@ def arrow_row(a, b):
             elif i == b:
                 row.append(arrow_r)
     elif a>b:
-        for i in range(num_col):
+        for i in range(num_col_in_log):
             if i>a or i<b:
                 row.append(spase)
             elif i<a and i > b:
