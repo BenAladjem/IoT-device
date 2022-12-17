@@ -16,6 +16,7 @@ arrow_r  = "-->               |"
 arrow_l  = "    <--------------"
 line_r  =  "    ---------------"
 line_l  =  "---               |"
+
 row1 = [a, spase, spase, spase, spase, spase]
 row2 = [spase, a, spase, spase, spase, spase]
 row3 = [spase, spase, a, spase, spase, spase]
