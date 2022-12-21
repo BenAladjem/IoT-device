@@ -10,7 +10,7 @@ from commands import*
 from data import Database
 
 #from findyIoT import FindyIoT
-
+#test дали ще се запамети
 
 modem = Sim7070()
 
@@ -210,7 +210,7 @@ def class_instance_action(command):# за тест генерира съобще
         mess = class_instance.get_dataBat()
         class_instance.send_msg_to_the_server(mess)
 
-def command_cicle(): # чете и изпълнява чакащите команди от сървъра, докато има
+def command_cycle(): # чете и изпълнява чакащите команди от сървъра, докато има
     
     global class_instance
     print("METHOD command_cicle()")
@@ -268,3 +268,4 @@ gps_d = {"254": "42.674884", "255": "23.289787", "256": "592.877", "257": "16690
 gps_def = {"254": "00", "255": "00", "256": "00", "257": "00", "258": "00"}
 value = d.read("565")
 print(value)
+command_cycle()
