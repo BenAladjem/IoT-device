@@ -1,12 +1,12 @@
-from modem import *
+from modem import * 
 #from config import *
 import config
-import data
+import data 
 import utime
 
 #global log
 log = config.log
-#global spase
+#global spase 
 spase = config.spase
 #global em_row
 global modem
@@ -20,13 +20,13 @@ num_col = config.num_col
 
 class Commands:
     CLASS_NAME = "Commands"
-    global modem
+    #global modem
     #global imei  #
     #imei = modem.getImei()
     
-    global log
-    global spase
-    global em_row
+    #global log
+    #global spase
+    #global em_row
     im = []
     
     def __init__(self, command):
@@ -151,13 +151,13 @@ class Commands:
         pas = "87654321"
         #cpsi = modem.getCPSI()
         #eng = modem.getEng()
-        #imei = modem.getImei()
+        imei = modem.getImei()
         batt = modem.getBat()#[1]
         batt = ",".join(batt) # returns str
         cell_info = modem.parseCpsi()
         #print(type(cpsi),"   cpsi = ",cpsi)
         #print(type(eng), "   eng = ", eng)
-        #print(type(imei),"   imei = ",imei)
+        print(type(imei),"   imei = ",imei)
         print(type(batt), "   batt = ", batt)
         
         #description = name+imei+"BAT-"+batt+"GSM:"+cell_info["tac"]+","+cell_info["cell_id"]+","+cell_info["mcc"]+','+cell_info["mnc"]+','+cell_info["tac"]+','+cell_info["cell_id"]+","+cell_info["rssi"]
@@ -181,7 +181,7 @@ class Commands:
         pas = "87654321"
         #eng = modem.getEngLite()
         eng = modem.parseEng()
-        #imei = modem.getImei()
+        imei = modem.getImei()
         batt = modem.getBat()#[1]
         batt = ",".join(batt) # returns str
         #cell_info = modem.parseCpsi()
@@ -345,7 +345,7 @@ class Mode(Commands):
         super().__init__(command)
         self.command = command
         
-'''        
+        
     def __repr__(self):
         return "class name : ",self.CLASS_NAME, "command : ", self.command
         
@@ -361,7 +361,7 @@ class Mode(Commands):
     def imei_ret(self):  # Not work  !
         return "iiimei = ", imei
         
-'''    
+    
     def take_mode_dict(self): # returns mode command
         print("class Mode / METHOD take_mode_dict()")
         em_row = [spase]*num_col_in_log
@@ -500,7 +500,7 @@ class Gprs(Commands):
         if gps != False:
             loc_info = modem.return_base64(gps)
         #message = "/input.php?IMEI="+imei+"&bat="+batt+"&GPSArray="+loc_info+"=&"
-            message = "/input.php?IMEI="+self.im[0]+"&bat="+batt[1]+"&GPSArray="+loc_info+"=&"
+            message = "/input.php?IMEI="+Gprs.im[0]+"&bat="+batt[1]+"&GPSArray="+loc_info+"=&"
             modem.turnOffGPS()
             modem.cipClose()
             
@@ -514,8 +514,8 @@ class Gprs(Commands):
             batt = ",".join(batt)
             #eng = modem.getEng()
             #eng = modem.parseEng()  преместих го на 194 ред
-            description = name+self.im[0]+"BAT-"+batt+"GSM:0000,FFFF"+eng
-            message = "/input.php?IMEI="+self.im[0]+"&User="+name+"&Pass="+pas+"&Description="+description+"&GPS-OFF"
+            description = name+Gprs.im[0]+"BAT-"+batt+"GSM:0000,FFFF"+eng
+            message = "/input.php?IMEI="+Gprs.im[0]+"&User="+name+"&Pass="+pas+"&Description="+description+"&GPS-OFF"
             modem.cipClose()
 
         modem.connectHiGPS()
