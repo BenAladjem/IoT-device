@@ -52,7 +52,8 @@ class Sim7070(object):
         em_row = [spase]*num_col
         em_row[this_column] = method
         #log.append("".join(em_row))
-        log.append(em_row)
+        print(gc.mem_free())
+        log.append(em_row) # 
 
 
     def remov(self, text):

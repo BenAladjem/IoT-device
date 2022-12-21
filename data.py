@@ -8,7 +8,7 @@ global spase
 spase = config.spase
 global em_row
 em_row = config.em_row
-num_col_in_log = config.num_col
+num_col = config.num_col
 this_column = 3
 
 class Database(object):
@@ -99,7 +99,7 @@ class Database(object):
             method = method + " "*(18-len(method)) + "|"
         else:
             method = method +"|"
-        em_row = [spase]*num_col_in_log
+        em_row = [spase]*num_col
         em_row[this_column] = method
         #log.append("".join(em_row))
         log.append(em_row)    
