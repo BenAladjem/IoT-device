@@ -6,6 +6,7 @@ import gc
 
 from modem import Sim7070
 from commands import*
+
 from data import Database
 
 #from findyIoT import FindyIoT
@@ -59,7 +60,7 @@ def arrow_row(a, b):
         return False
     row = []
     if a<b:
-        for i in range(num_col_in_log):
+        for i in range(num_col):
             if i<a or i>b:
                 row.append(spase)
             elif i>a and i < b:
@@ -69,7 +70,7 @@ def arrow_row(a, b):
             elif i == b:
                 row.append(arrow_r)
     elif a>b:
-        for i in range(num_col_in_log):
+        for i in range(num_col):
             if i>a or i<b:
                 row.append(spase)
             elif i<a and i > b:
@@ -163,9 +164,11 @@ def reading_command(): #изпраща команда обръщение към 
     modem.cipClose()
     modem.connectHiGPS()    
     com = modem.sendHiGPS("/input.php?IMEI=865456054799968")
-    #modem.cipClose()
+    modem.cipClose()
     print("com= ", com)
-    if len(com) > 1 :
+    if com == False:
+        raise Exception("Connection error")
+    if len(com) > 1:
         com = com.decode("utf-8")
         
         return com
@@ -268,3 +271,4 @@ gps_def = {"254": "00", "255": "00", "256": "00", "257": "00", "258": "00"}
 value = d.read("565")
 print(value)
 command_cycle()
+print_log()
