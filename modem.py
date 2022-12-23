@@ -52,8 +52,7 @@ class Sim7070(object):
         em_row = [spase]*num_col
         em_row[this_column] = method
         #log.append("".join(em_row))
-        print(gc.mem_free())
-        log.append(em_row) # 
+        log.append(em_row)
 
 
     def remov(self, text):
@@ -73,6 +72,7 @@ class Sim7070(object):
 
         self.us('AT+CNCFG=0,1,"' + self.apn + '"')  # защо е това?
         if "OK" in at:
+            print("Is On")
             return True
         else:
             return False
@@ -370,14 +370,15 @@ class Sim7070(object):
                 inf = inf.split(responce)[1]
                 inf = inf.split(",")
                 inf = self.remov(inf)
-            
+                print("inf = ", inf)
             else:
                 return "No"
             
-            if inf[1]:
+            if inf[2]:  # if inf[1]:
                 self.turnOffGPS()
-                #self.turnOff()
-                #self.turnOn()
+                self.turnOff()
+                self.turnOn()
+                time.sleep(4)
                 #self.us("AT+CGNSPWR=0") # without this GSM dont work
                 #self.isReg()
                 return inf
@@ -388,7 +389,9 @@ class Sim7070(object):
             print(count_start)
             if count_start >= count_end:
                 self.turnOffGPS()
-
+                self.turnOff()
+                self.turnOn()
+                time.sleep(4)
                 return False
         
 
@@ -470,6 +473,7 @@ class Sim7070(object):
         loc64 = ubinascii.b2a_base64(locJSON)
         loc64 = loc64.decode("utf-8")
         loc64 = loc64.replace("\n", "")
+        print("loc64 = ", loc64)
         return loc64
         
         
@@ -539,7 +543,7 @@ class Sim7070(object):
         print("cnact= ",cnact)
         while "DEACTIVE" in cnact  and retry >0 :
             deact = self.us('AT+CNACT=0,0',2)
-            cnact = self.us('AT+CNACT=0,1',3).decode("utf-8")
+            cnact = self.us('AT+CNACT=0,1',4).decode("utf-8")
             retry = retry -1 
         if "DEACTIVE" in cnact :                
             self.turnOff()
@@ -760,7 +764,6 @@ class Sim7070(object):
         self.us("AT+CENG=0")
         #eng = ee[1]
         return cells 
-
 
 
 
