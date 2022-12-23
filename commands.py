@@ -516,6 +516,7 @@ class Gprs(Commands):
             #eng = modem.parseEng()  преместих го на 194 ред
             description = name+Gprs.im[0]+"BAT-"+batt+"GSM:0000,FFFF"+eng
             message = "/input.php?IMEI="+Gprs.im[0]+"&User="+name+"&Pass="+pas+"&Description="+description+"&GPS-OFF"
+            print("GPS Off message = ", message)
             modem.cipClose()
 
         modem.connectHiGPS()
