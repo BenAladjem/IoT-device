@@ -378,7 +378,7 @@ class Sim7070(object):
                 self.turnOffGPS()
                 self.turnOff()
                 self.turnOn()
-                time.sleep(4)
+                utime.sleep(4)
                 #self.us("AT+CGNSPWR=0") # without this GSM dont work
                 #self.isReg()
                 return inf
@@ -391,7 +391,7 @@ class Sim7070(object):
                 self.turnOffGPS()
                 self.turnOff()
                 self.turnOn()
-                time.sleep(4)
+                utime.sleep(4)
                 return False
         
 
@@ -441,6 +441,10 @@ class Sim7070(object):
                 location.append(parameters_info[key])
             print(inf)
             print(location)
+            self.turnOffGPS()
+            self.turnOff()
+            self.turnOn()
+            utime.sleep(4)
             '''
             l = {location[timestamp]:location}
             
@@ -631,7 +635,7 @@ class Sim7070(object):
         print("REP")
         print(rep)
         return resp
-        if len(resp) <4 :
+        if len(resp) < 4 :
             print("Fail 1")
             return False
         else:
