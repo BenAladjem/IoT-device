@@ -584,7 +584,7 @@ class Sim7070(object):
                                 #Response
                                 # +CNACT: <pdpidx>,<statusx>,<addressx>
 
-        self.us('AT+CAOPEN=0,0,"TCP","in.higps.org",80',4)
+        self.us('AT+CAOPEN=0,0,"TCP","in.higps.org",80',3)
                 #AT+CAOPEN   Open a TCP/UDP Connection
         
         
