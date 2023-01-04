@@ -660,6 +660,11 @@ class Set(Commands):
         
         #log.append("".join([ spase, "Set/return_res()|", spase, spase]))
         print("class Set : METHOD return result()")
+        c = self.command
+        a, k, v = c.split(",")
+        
+        return
+        
     
     
 class Get(Commands):
