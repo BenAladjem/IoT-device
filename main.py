@@ -243,6 +243,7 @@ def command_cycle(): # чете и изпълнява чакащите кома�
 
 
 log_gc(gc.mem_free())
+modem.turnOn()
 
 if modem.isOn() == False:
     print("Turning on modem")
