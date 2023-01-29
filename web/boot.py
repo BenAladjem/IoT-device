@@ -19,8 +19,8 @@ esp.osdebug(None)
 import gc
 gc.collect()
 
-ssid = 'REPLACE_WITH_YOUR_SSID'
-password = 'REPLACE_WITH_YOUR_PASSWORD'
+ssid = "TP-LINK_CF"
+password = "********************"
 
 station = network.WLAN(network.STA_IF)
 
@@ -34,3 +34,4 @@ print('Connection successful')
 print(station.ifconfig())
 
 led = Pin(2, Pin.OUT)
+led.value(1)
